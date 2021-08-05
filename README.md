@@ -1,8 +1,8 @@
 ### Hi, I'm, Vlad! <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25px">
 
-![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=voropaevv&layout=compact&bg_color=001330&title_color=1a5bff&text_color=6ed9fa)
+![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=voropaevv&layout=compact&bg_color=60,5263ff,002f75&title_color=f0f6ff&text_color=6ed9fa&border_radius=10)
 
-![GitHub stats](https://github-readme-stats.vercel.app/api?username=voropaevv&show_icons=true&bg_color=001330&title_color=1a5bff&text_color=6ed9fa&icon_color=2dfcfc&show_icons=true)
+![GitHub stats](https://github-readme-stats.vercel.app/api?username=voropaevv&line_height=30&show_icons=true&bg_color=60,5263ff,002f75&title_color=f0f6ff&text_color=6ed9fa&icon_color=2dfcfc&show_icons=true&border_radius=10)
 
 ### Links:
 
