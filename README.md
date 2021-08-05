@@ -1,5 +1,7 @@
 ### Hi, I'm, Vlad! <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25px">
 
+<img align="left" width="490" height="165" src="https://github-readme-stats.vercel.app/api?username=voropaevv&show_icons=true&hide_border=false&line_height=20&title_color=f69673&icon_color=5b93c9&show_owner=true"/>
+
 ### Links:
 
 <a href="https://www.facebook.com/profile.php?id=100005282805777"><img height="20" src="https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white"></a> <a href="https://vk.com/drftd"><img height="20" src="https://img.shields.io/badge/вконтакте-%232E87FB.svg?&style=for-the-badge&logo=vk&logoColor=white"></a> <a href="https://www.kaggle.com/vvd0ai"><img height="20" src="https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=Kaggle&logoColor=white"></a>
