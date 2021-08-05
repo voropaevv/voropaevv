@@ -2,7 +2,7 @@
 
 ### Links:
 
-<a href="https://www.facebook.com/profile.php?id=100005282805777"><img height="20" src="https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white"></a> <a href="https://vk.com/drftd"><img height="20" src="https://img.shields.io/badge/вконтакте-%232E87FB.svg?&style=for-the-badge&logo=vk&logoColor=white"></a>
+<a href="https://www.facebook.com/profile.php?id=100005282805777"><img height="20" src="https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white"></a> <a href="https://vk.com/drftd"><img height="20" src="https://img.shields.io/badge/вконтакте-%232E87FB.svg?&style=for-the-badge&logo=vk&logoColor=white"></a> <a href="https://www.kaggle.com/vvd0ai"><img height="20" src="https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=Kaggle&logoColor=white"></a>
 
 ![](https://visitor-badge.glitch.me/badge?page_id=voropaevv.voropaevv)
 
