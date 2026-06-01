@@ -1,33 +1,44 @@
-### Hi, I'm Vlad! <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="25px">
+<p align="center">
+  <img src="./assets/matrix.svg" alt="Animated Matrix-style profile header for Vlad Voropaev" width="100%" />
+</p>
 
-<details>
-  <summary>:bar_chart: Statistics:</summary>
-  <img alight="left" alt="Top Langs" src="https://github-readme-stats.vercel.app/api/top-langs/?username=voropaevv&layout=compact&bg_color=60,5263ff,002f75&title_color=f0f6ff&text_color=6ed9fa&border_radius=10" />
-  <br />
-  <img alight="left" alt="GitHub stats" src="https://github-readme-stats.vercel.app/api?username=voropaevv&line_height=30&show_icons=true&bg_color=60,5263ff,002f75&title_color=f0f6ff&text_color=6ed9fa&icon_color=2dfcfc&show_icons=true&border_radius=10" />
-</details>
-  
-### Links:
+<h1 align="center">Vlad Voropaev · vladthecyborg</h1>
 
-<a href="https://www.facebook.com/profile.php?id=100005282805777"><img height="20" src="https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white"></a> <a href="https://vk.com/drftd"><img height="20" src="https://img.shields.io/badge/вконтакте-%232E87FB.svg?&style=for-the-badge&logo=vk&logoColor=white"></a> <a href="https://www.kaggle.com/vvd0ai"><img height="20" src="https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=Kaggle&logoColor=white"></a>
+<p align="center">
+  I like taking strange questions apart, building tools around them, and sharing what I find.
+</p>
 
-![](https://visitor-badge.glitch.me/badge?page_id=voropaevv.voropaevv)
-
-<br/>
+<p align="center">
+  <code>AI systems</code> · <code>research tooling</code> · <code>local-first experiments</code> · <code>computer vision</code> · <code>visual explanations</code>
+</p>
 
 ---
 
-### Languages and tools:
+### Current public work
 
-<img height="30" src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=darkgreen"> <img height="20" src="https://img.shields.io/badge/Numpy-777BB4?style=for-the-badge&logo=numpy&logoColor=white"> <img height="20" src="https://img.shields.io/badge/Pandas-2C2D72?style=for-the-badge&logo=pandas&logoColor=white"> <img height="20" src="https://img.shields.io/badge/scikit_learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white"> <img height="20" src="https://img.shields.io/badge/Plotly-239120?style=for-the-badge&logo=plotly&logoColor=white"> <img height="20" src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=TensorFlow&logoColor=white">
+- `local-ai-chat-exporter` — a public tool in progress.
+- `voropaevv` — this profile README and visual identity layer.
 
-<img height="30" src="https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white">
+Most experiments stay private until they can be published without private data, internal code, or unfinished context.
 
-<img height="30" src="https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white">
+### What I usually build around
 
-<img height="30" src="https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white">
+| Area | Direction |
+|---|---|
+| AI systems | local-first tools, agents, task workflows, chat/data export utilities |
+| Research | source maps, notes, structured findings, explanation pipelines |
+| Computer vision | detection, tracking, video analytics, visual systems |
+| Media tooling | scripts, diagrams, README systems, visual explanations |
 
-#### Frameworks
-<img height="20" src="https://img.shields.io/badge/Jupyter-F37626.svg?&style=for-the-badge&logo=Jupyter&logoColor=white"> <img height="20" src="https://img.shields.io/badge/OpenCV-27338e?style=for-the-badge&logo=OpenCV&logoColor=white"> <img height="20" src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white">
+### Operating style
 
----
+I prefer small tools that expose how something works, not large abstractions that hide the mechanism.
+
+```text
+question -> experiment -> tool -> explanation -> shared artifact
+```
+
+### Matrix layer
+
+The visual header is generated from `scripts/generate_matrix_svg.py`.
+The cursor-reactive canvas version is in `docs/` and can be hosted with GitHub Pages.
