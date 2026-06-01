@@ -1,44 +1,57 @@
+<!--
+Profile README for github.com/voropaevv.
+The live cursor-reactive version is published through GitHub Pages from /docs.
+-->
+
 <p align="center">
-  <img src="./assets/matrix.svg" alt="Animated Matrix-style profile header for Vlad Voropaev" width="100%" />
+  <a href="https://voropaevv.github.io/voropaevv/">
+    <img src="assets/matrix-profile.gif" alt="Matrix-style digital rain with red research and AI-system terms" width="100%" />
+  </a>
 </p>
 
 <h1 align="center">Vlad Voropaev · vladthecyborg</h1>
 
 <p align="center">
-  I like taking strange questions apart, building tools around them, and sharing what I find.
+  I like understanding complicated things, building useful tools, and turning what I find into something other people can use.
 </p>
 
 <p align="center">
-  <code>AI systems</code> · <code>research tooling</code> · <code>local-first experiments</code> · <code>computer vision</code> · <code>visual explanations</code>
+  <code>AI systems</code> · <code>local-first tools</code> · <code>research workflows</code> · <code>computer vision</code> · <code>visual explanations</code>
+</p>
+
+<p align="center">
+  <a href="https://voropaevv.github.io/voropaevv/">Open interactive Matrix version</a>
 </p>
 
 ---
 
-### Current public work
+### Current build
 
-- `local-ai-chat-exporter` — a public tool in progress.
-- `voropaevv` — this profile README and visual identity layer.
+- `local-ai-chat-exporter` — a public tool for exporting, structuring, and preserving local AI conversations.
+- `voropaevv` — this profile as a visual interface, not a conventional résumé page.
+- More public repositories will appear only when they are useful enough to stand alone.
 
-Most experiments stay private until they can be published without private data, internal code, or unfinished context.
-
-### What I usually build around
-
-| Area | Direction |
-|---|---|
-| AI systems | local-first tools, agents, task workflows, chat/data export utilities |
-| Research | source maps, notes, structured findings, explanation pipelines |
-| Computer vision | detection, tracking, video analytics, visual systems |
-| Media tooling | scripts, diagrams, README systems, visual explanations |
-
-### Operating style
-
-I prefer small tools that expose how something works, not large abstractions that hide the mechanism.
+### What I usually build
 
 ```text
-question -> experiment -> tool -> explanation -> shared artifact
+question
+  -> sources
+  -> mechanism
+  -> small tool
+  -> public artifact
 ```
 
-### Matrix layer
+### Working interests
 
-The visual header is generated from `scripts/generate_matrix_svg.py`.
-The cursor-reactive canvas version is in `docs/` and can be hosted with GitHub Pages.
+| Area | What I care about |
+|---|---|
+| AI systems | agents, local workflows, auditability, task memory |
+| Research tooling | source maps, claim extraction, structured notes |
+| Computer vision | video analysis, detection, tracking, applied CV systems |
+| Public explanations | strange questions, deep explanations, visual stories |
+
+---
+
+<p align="center">
+  <sub>UAE · building public artifacts when the public version is ready</sub>
+</p>
