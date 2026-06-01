@@ -79,20 +79,48 @@ RED = (255, 48, 48)
 BLACK = (0, 0, 0)
 WHITE_GREEN = (228, 255, 235)
 MUTED_GREEN = (168, 255, 190)
+JAPANESE_GLYPH_SAMPLE = "アあヴ"
+
+
+FONT_CANDIDATES = [
+    "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc",
+    "/System/Library/Fonts/Hiragino Sans GB.ttc",
+    "/Library/Fonts/NotoSansCJK-Regular.ttc",
+    "/Library/Fonts/NotoSansJP-Regular.otf",
+    "/Library/Fonts/NotoSerifJP-Bold.otf",
+    "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+    "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Regular.otf",
+    "/usr/share/fonts/opentype/noto/NotoSerifCJK-Regular.ttc",
+    "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
+    "/usr/share/fonts/opentype/ipafont-gothic/ipag.ttf",
+    "/System/Library/Fonts/Menlo.ttc",
+    "/System/Library/Fonts/Supplemental/Courier New.ttf",
+    "/System/Library/Fonts/Monaco.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+    "/usr/share/fonts/truetype/liberation2/LiberationMono-Regular.ttf",
+]
+
+
+def font_renders_distinct_glyphs(font: ImageFont.ImageFont, text: str) -> bool:
+    masks = {bytes(font.getmask(glyph)) for glyph in text}
+    return len(masks) == len(text)
 
 
 def get_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    for path in [
-        "/System/Library/Fonts/Menlo.ttc",
-        "/System/Library/Fonts/Supplemental/Courier New.ttf",
-        "/System/Library/Fonts/Monaco.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
-        "/usr/share/fonts/truetype/liberation2/LiberationMono-Regular.ttf",
-    ]:
+    fallback_font: ImageFont.FreeTypeFont | ImageFont.ImageFont | None = None
+    for path in FONT_CANDIDATES:
         try:
-            return ImageFont.truetype(path, size=size)
+            font = ImageFont.truetype(path, size=size)
         except OSError:
             continue
+
+        if fallback_font is None:
+            fallback_font = font
+        if font_renders_distinct_glyphs(font, JAPANESE_GLYPH_SAMPLE):
+            return font
+
+    if fallback_font is not None:
+        return fallback_font
     return ImageFont.load_default()
 
 

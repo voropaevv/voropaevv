@@ -42,6 +42,10 @@ GitHub profile README cannot run the canvas JavaScript directly. The README uses
 The page respects `prefers-reduced-motion` by rendering a static frame and
 stops the animation frame loop while the tab is hidden.
 
+The generated GIF/PNG must be rendered with a Japanese-capable font. The
+generator prefers Hiragino/Noto CJK fonts and the GitHub Actions workflow
+installs `fonts-noto-cjk` before regenerating assets.
+
 ## Update workflow
 
 Edit words in two places:
