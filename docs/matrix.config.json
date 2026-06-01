@@ -1,0 +1,73 @@
+{
+  "identity": {
+    "title": "Vlad Voropaev · Vlad the Cyborg",
+    "subtitle": "AI systems · local-first tools · research workflows · automation",
+    "lead": "I like understanding complicated things, building useful tools, and turning what I find into something other people can use.",
+    "eyebrow": "terminal://public-profile",
+    "profileUrl": "https://github.com/voropaevv",
+    "pagesUrl": "https://voropaevv.github.io/voropaevv/",
+    "primaryProjectUrl": "https://github.com/voropaevv/local-ai-chat-exporter"
+  },
+  "tags": [
+    "AI systems",
+    "local-first tools",
+    "research workflows",
+    "automation"
+  ],
+  "links": [
+    {"label": "GitHub profile", "url": "https://github.com/voropaevv"},
+    {"label": "local-ai-chat-exporter", "url": "https://github.com/voropaevv/local-ai-chat-exporter"}
+  ],
+  "terminalPrompts": [
+    "design a local-first browser extension for exporting AI chats",
+    "turn local AI conversations into readable archives",
+    "structure exported chats for search, backup, and reuse",
+    "prototype the small tool before the system gets complicated",
+    "publish the useful version when it can stand alone"
+  ],
+  "highlightWords": [
+    "VLAD THE CYBORG",
+    "VOROPAEV",
+    "QUESTIONS",
+    "SYSTEMS",
+    "AI AGENTS",
+    "LOCAL FIRST",
+    "LOCAL AI",
+    "RESEARCH WORKFLOWS",
+    "AUTOMATION",
+    "CODEX",
+    "DATA",
+    "DIAGRAMS",
+    "SCRIPTS",
+    "PROTOTYPES",
+    "TOOLS",
+    "CODE",
+    "GITHUB",
+    "BROWSER EXTENSION",
+    "CHAT EXPORTER",
+    "LOCAL AI CHAT EXPORTER",
+    "CHAT ARCHIVE",
+    "VISUAL EXPLANATIONS",
+    "OPEN SOURCE"
+  ],
+  "colors": {
+    "background": "#000000",
+    "green": "#00ff41",
+    "greenDim": "#00451f",
+    "greenHead": "#c5ffd6",
+    "cursor": "#eafff0",
+    "red": "#ff3030",
+    "panelBg": "rgba(0, 12, 3, 0.78)",
+    "panelBorder": "rgba(0, 255, 65, 0.34)",
+    "text": "#eafff0",
+    "muted": "rgba(234, 255, 240, 0.72)"
+  },
+  "animation": {
+    "wordProbability": 0.84,
+    "fallStreamCount": 58,
+    "cursorRadiusPx": 128,
+    "cursorSpawnPerFrame": 42,
+    "baseFontSize": 16,
+    "seed": 20260601
+  }
+}

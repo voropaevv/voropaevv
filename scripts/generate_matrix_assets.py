@@ -1,75 +1,28 @@
 from __future__ import annotations
 
+import json
 import random
+import shutil
+import textwrap
 from html import escape
 from pathlib import Path
+from typing import Any
 
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets"
+DOCS = ROOT / "docs"
+CONFIG_PATH = ROOT / "matrix.config.json"
+DOCS_CONFIG_PATH = DOCS / "matrix.config.json"
 ASSETS.mkdir(exist_ok=True)
-
-WORDS = [
-    "VLAD",
-    "VOROPAEV",
-    "VOROPAEVV",
-    "QUESTIONS",
-    "STRANGE",
-    "WHY",
-    "HOW",
-    "WHAT IF",
-    "BUILDING",
-    "RESEARCH",
-    "SYSTEMS",
-    "AI AGENTS",
-    "LOCAL AI",
-    "LOCAL FIRST",
-    "CHAT EXPORTER",
-    "SOURCE MAP",
-    "CLAIM MATRIX",
-    "MECHANISMS",
-    "EVIDENCE",
-    "UNCERTAINTY",
-    "VISUAL STORIES",
-    "DEEP EXPLANATIONS",
-    "EXPLAINERS",
-    "PYTHON",
-    "TYPESCRIPT",
-    "COMPUTER VISION",
-    "AUTOMATION",
-    "NOTEBOOKS",
-    "DATA",
-    "DIAGRAMS",
-    "SCRIPTS",
-    "PROTOTYPES",
-    "AUDITABLE",
-    "READABLE",
-    "STRUCTURE",
-    "TOOLS",
-    "CODE",
-    "GITHUB",
-    "README",
-    "FINDINGS",
-    "BUILD AND SHARE",
-]
-
-GLYPHS = (
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "abcdefghijklmnopqrstuvwxyz"
-    "0123456789"
-    "!@#$%^&*()-_=+[]{}|;:'\",.<>/?`~\\"
-    "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンヴガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポァィゥェォャュョッー・"
-    "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん"
-)
+DOCS.mkdir(exist_ok=True)
 
 W, H = 1200, 460
 CELL_W = 16
 CELL_H = 20
 COLS = W // CELL_W
 ROWS = H // CELL_H
-FRAMES = 42
-DURATION_MS = 72
 SEED = 20260601
 
 GREEN = (0, 255, 65)
@@ -79,8 +32,18 @@ RED = (255, 48, 48)
 BLACK = (0, 0, 0)
 WHITE_GREEN = (228, 255, 235)
 MUTED_GREEN = (168, 255, 190)
+PANEL_FILL = (0, 12, 3, 206)
+PANEL_OUTLINE = (0, 255, 65, 92)
 JAPANESE_GLYPH_SAMPLE = "アあヴ"
 
+GLYPHS = (
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123456789"
+    "!@#$%^&*()-_=+[]{}|;:'\",.<>/?`~\\"
+    "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンヴガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポァィゥェォャュョッー・"
+    "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん"
+)
 
 FONT_CANDIDATES = [
     "/System/Library/Fonts/ヒラギノ角ゴシック W3.ttc",
@@ -99,6 +62,16 @@ FONT_CANDIDATES = [
     "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
     "/usr/share/fonts/truetype/liberation2/LiberationMono-Regular.ttf",
 ]
+
+
+def load_config() -> dict[str, Any]:
+    with CONFIG_PATH.open("r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def sync_docs_config() -> None:
+    if CONFIG_PATH.exists():
+        shutil.copyfile(CONFIG_PATH, DOCS_CONFIG_PATH)
 
 
 def font_renders_distinct_glyphs(font: ImageFont.ImageFont, text: str) -> bool:
@@ -129,6 +102,10 @@ def mix(color: tuple[int, int, int], alpha: float) -> tuple[int, int, int]:
     return tuple(max(0, min(255, int(value * alpha))) for value in color)
 
 
+def rgb(color: tuple[int, int, int]) -> str:
+    return f"rgb({color[0]},{color[1]},{color[2]})"
+
+
 def draw_text_with_glow(
     draw: ImageDraw.ImageDraw,
     xy: tuple[int, int],
@@ -147,10 +124,10 @@ def draw_text_with_glow(
     draw.text((x, y), text, font=font, fill=fill)
 
 
-def create_streams(rng: random.Random) -> list[dict[str, object]]:
+def create_streams(rng: random.Random, words: list[str]) -> list[dict[str, object]]:
     streams: list[dict[str, object]] = []
     for col in rng.sample(range(COLS), min(COLS, 56)):
-        word = rng.choice(WORDS).replace(" ", "·") if rng.random() < 0.82 else ""
+        word = rng.choice(words).replace(" ", "·") if rng.random() < 0.82 else ""
         streams.append(
             {
                 "col": col,
@@ -164,132 +141,209 @@ def create_streams(rng: random.Random) -> list[dict[str, object]]:
     return streams
 
 
+def draw_background(draw: ImageDraw.ImageDraw, rng: random.Random, words: list[str], frame_idx: int = 0) -> None:
+    mono = get_font(16)
+    streams = create_streams(random.Random(SEED), words)
+
+    for _ in range(360):
+        x = rng.randrange(0, W // CELL_W) * CELL_W
+        y = rng.randrange(0, H // CELL_H) * CELL_H
+        ch = rng.choice(GLYPHS)
+        alpha = rng.uniform(0.08, 0.24)
+        draw.text((x, y), ch, font=mono, fill=mix(GREEN_DIM, alpha))
+
+    for stream in streams:
+        head = int((frame_idx * float(stream["speed"]) + int(stream["offset"])) % (ROWS + int(stream["trail"]) + 18)) - int(stream["trail"])
+        col = int(stream["col"])
+        word = str(stream["word"])
+        word_start = int(stream["word_offset"])
+        for t in range(int(stream["trail"])):
+            row = head - t
+            if row < 0 or row >= ROWS:
+                continue
+            x = col * CELL_W
+            y = row * CELL_H
+            alpha = 1.0 - (t / max(1, int(stream["trail"])))
+            color = mix(GREEN, 0.22 + 0.78 * alpha)
+            ch = rng.choice(GLYPHS)
+
+            word_pos = t - word_start
+            if word and 0 <= word_pos < len(word):
+                ch = word[word_pos]
+                color = RED
+            elif t == 0:
+                color = GREEN_HEAD
+
+            draw.text((x, y), ch, font=mono, fill=color)
+
+
 def draw_panel(draw: ImageDraw.ImageDraw, image: Image.Image) -> Image.Image:
     panel = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     panel_draw = ImageDraw.Draw(panel)
     panel_draw.rounded_rectangle(
-        (92, 112, W - 92, H - 92),
-        radius=20,
-        fill=(0, 12, 3, 192),
-        outline=(0, 255, 65, 90),
+        (92, 98, W - 92, H - 78),
+        radius=18,
+        fill=PANEL_FILL,
+        outline=PANEL_OUTLINE,
         width=1,
     )
-    panel_draw.rectangle((92, 112, W - 92, 114), fill=(255, 48, 48, 175))
     return Image.alpha_composite(image.convert("RGBA"), panel).convert("RGB")
 
 
-def draw_identity(draw: ImageDraw.ImageDraw) -> None:
-    title_font = get_font(42)
-    subtitle_font = get_font(20)
+def draw_identity(draw: ImageDraw.ImageDraw, config: dict[str, Any]) -> None:
+    title_font = get_font(40)
+    subtitle_font = get_font(18)
     small_font = get_font(15)
-    draw_text_with_glow(draw, (132, 150), "Vlad Voropaev · vladthecyborg", title_font, WHITE_GREEN)
-    draw_text_with_glow(draw, (132, 213), "AI systems · research tools · visual explanations", subtitle_font, GREEN)
-    draw.text(
-        (132, 270),
-        "strange questions  ->  mechanisms  ->  useful tools  ->  public artifacts",
-        font=small_font,
-        fill=MUTED_GREEN,
-    )
-    draw.text(
-        (132, 316),
-        "highlight terms: SOURCE MAP · CLAIM MATRIX · LOCAL AI · COMPUTER VISION",
-        font=small_font,
-        fill=RED,
-    )
+    command_font = get_font(20)
+    title = config["identity"]["title"]
+    subtitle = config["identity"]["subtitle"]
+    lead = config["identity"]["lead"]
+    prompt = config["terminalPrompts"][0]
+
+    draw.text((132, 132), config["identity"].get("eyebrow", "terminal://public-profile"), font=small_font, fill=RED)
+    draw_text_with_glow(draw, (132, 164), title, title_font, WHITE_GREEN)
+    draw_text_with_glow(draw, (132, 224), subtitle, subtitle_font, GREEN)
+    draw.text((132, 264), lead, font=small_font, fill=MUTED_GREEN)
+
+    draw.rounded_rectangle((132, 322, W - 132, 378), radius=6, fill=(0, 18, 4), outline=(0, 255, 65, 64), width=1)
+    draw.text((156, 340), "$", font=command_font, fill=GREEN)
+    draw.text((184, 340), prompt, font=command_font, fill=WHITE_GREEN)
+    draw.text((184 + min(820, len(prompt) * 12), 340), "▌", font=command_font, fill=GREEN)
 
 
-def generate_frames() -> list[Image.Image]:
+def write_preview_png(config: dict[str, Any]) -> None:
     rng = random.Random(SEED)
-    mono = get_font(16)
-    streams = create_streams(rng)
-    frames: list[Image.Image] = []
-
-    for frame_idx in range(FRAMES):
-        image = Image.new("RGB", (W, H), BLACK)
-        draw = ImageDraw.Draw(image)
-
-        for _ in range(360):
-            x = rng.randrange(0, W // CELL_W) * CELL_W
-            y = rng.randrange(0, H // CELL_H) * CELL_H
-            ch = rng.choice(GLYPHS)
-            alpha = rng.uniform(0.08, 0.24)
-            draw.text((x, y), ch, font=mono, fill=mix(GREEN_DIM, alpha))
-
-        for stream in streams:
-            head = int((frame_idx * float(stream["speed"]) + int(stream["offset"])) % (ROWS + int(stream["trail"]) + 18)) - int(stream["trail"])
-            col = int(stream["col"])
-            word = str(stream["word"])
-            word_start = int(stream["word_offset"])
-            for t in range(int(stream["trail"])):
-                row = head - t
-                if row < 0 or row >= ROWS:
-                    continue
-                x = col * CELL_W
-                y = row * CELL_H
-                alpha = 1.0 - (t / max(1, int(stream["trail"])))
-                color = mix(GREEN, 0.22 + 0.78 * alpha)
-                ch = rng.choice(GLYPHS)
-
-                word_pos = t - word_start
-                if word and 0 <= word_pos < len(word):
-                    ch = word[word_pos]
-                    color = RED
-                elif t == 0:
-                    color = GREEN_HEAD
-
-                draw.text((x, y), ch, font=mono, fill=color)
-
-        image = draw_panel(draw, image)
-        draw = ImageDraw.Draw(image)
-        draw_identity(draw)
-        frames.append(image)
-
-    return frames
+    image = Image.new("RGB", (W, H), BLACK)
+    draw = ImageDraw.Draw(image)
+    draw_background(draw, rng, config["highlightWords"], frame_idx=18)
+    image = draw_panel(draw, image)
+    draw = ImageDraw.Draw(image)
+    draw_identity(draw, config)
+    image.save(ASSETS / "matrix-preview.png")
 
 
-def write_svg() -> None:
+def terminal_svg(config: dict[str, Any]) -> str:
+    prompts = [escape(prompt) for prompt in config["terminalPrompts"]]
+    total = 5.2 * len(prompts)
+    lines: list[str] = []
+    prompt_x = 184
+    prompt_y = 356
+    max_width = 820
+
+    for idx, prompt in enumerate(prompts):
+        start = idx * 5.2 / total
+        type_end = (idx * 5.2 + 1.55) / total
+        hold_end = (idx * 5.2 + 3.78) / total
+        erase_end = (idx * 5.2 + 4.95) / total
+        end = min(1.0, (idx * 5.2 + 5.2) / total)
+        key_times = f"0;{start:.5f};{type_end:.5f};{hold_end:.5f};{erase_end:.5f};{end:.5f};1"
+        opacity_values = "0;0;1;1;1;0;0"
+        width_values = f"0;0;{max_width};{max_width};0;0;0"
+        clip_id = f"terminal-clip-{idx}"
+        lines.append(
+            f'''<clipPath id="{clip_id}"><rect x="{prompt_x}" y="{prompt_y - 26}" width="0" height="38"><animate attributeName="width" dur="{total:.1f}s" repeatCount="indefinite" values="{width_values}" keyTimes="{key_times}" /></rect></clipPath>'''
+        )
+        lines.append(
+            f'''<text x="{prompt_x}" y="{prompt_y}" class="command" clip-path="url(#{clip_id})" opacity="0">{prompt}<animate attributeName="opacity" dur="{total:.1f}s" repeatCount="indefinite" values="{opacity_values}" keyTimes="{key_times}" /></text>'''
+        )
+
+    lines.append(
+        f'''<text x="1000" y="{prompt_y}" class="cursor">▌<animate attributeName="opacity" dur="1.05s" repeatCount="indefinite" values="1;1;0;0;1" keyTimes="0;0.48;0.49;0.98;1" /></text>'''
+    )
+    return "\n".join(lines)
+
+
+def write_svg(config: dict[str, Any]) -> None:
     rng = random.Random(SEED)
+    words = config["highlightWords"]
     chunks: list[str] = []
-    for _ in range(700):
+
+    for _ in range(650):
         x = rng.randrange(0, W)
         y = rng.randrange(0, H)
         ch = rng.choice(GLYPHS)
-        opacity = rng.uniform(0.08, 0.42)
+        opacity = rng.uniform(0.08, 0.38)
         color = "#00ff41" if rng.random() > 0.16 else "#00451f"
         chunks.append(f'<text x="{x}" y="{y}" fill="{color}" opacity="{opacity:.2f}">{escape(ch)}</text>')
 
-    red_words = ["AI AGENTS", "SOURCE MAP", "CLAIM MATRIX", "LOCAL FIRST", "UNCERTAINTY", "VISUAL STORIES"]
-    for i, word in enumerate(red_words):
-        chunks.append(f'<text x="{120 + (i % 2) * 480}" y="{70 + i * 54}" class="red">{word}</text>')
+    for i in range(42):
+        x = rng.randrange(0, W)
+        start_y = rng.randrange(-H, H)
+        speed = rng.uniform(7.0, 14.5)
+        stream_words = rng.choice(words).replace(" ", "·") if rng.random() < 0.75 else ""
+        glyphs = [rng.choice(GLYPHS) for _ in range(18)]
+        if stream_words:
+            insert_at = rng.randrange(3, 12)
+            for pos, ch in enumerate(stream_words[:10]):
+                if insert_at + pos < len(glyphs):
+                    glyphs[insert_at + pos] = ch
+        glyph_lines = []
+        for j, ch in enumerate(glyphs):
+            color = "#ff3030" if ch in stream_words else ("#c5ffd6" if j == 0 else "#00ff41")
+            opacity = max(0.12, 1.0 - j * 0.052)
+            glyph_lines.append(f'<text x="0" y="{j * 20}" fill="{color}" opacity="{opacity:.2f}">{escape(ch)}</text>')
+        chunks.append(
+            f'''<g transform="translate({x},{start_y})">{''.join(glyph_lines)}<animateTransform attributeName="transform" type="translate" from="{x} {start_y}" to="{x} {H + 120}" dur="{speed:.2f}s" begin="-{rng.uniform(0, speed):.2f}s" repeatCount="indefinite" /></g>'''
+        )
 
-    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="Matrix-style digital rain profile graphic">
-  <rect width="100%" height="100%" fill="#000"/>
-  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace" font-size="16">
-    {''.join(chunks)}
+    title = escape(config["identity"]["title"])
+    subtitle = escape(config["identity"]["subtitle"])
+    lead = escape(config["identity"]["lead"])
+    eyebrow = escape(config["identity"].get("eyebrow", "terminal://public-profile"))
+    terminal = terminal_svg(config)
+
+    style = textwrap.dedent(
+        """
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Noto Sans CJK JP', 'Noto Sans Mono CJK JP', monospace; }
+        .title { font-size: 44px; font-weight: 800; fill: #eafff0; filter: url(#glow); }
+        .subtitle { font-size: 20px; font-weight: 700; fill: #00ff41; }
+        .lead { font-size: 16px; fill: #a8ffbe; }
+        .eyebrow { font-size: 14px; fill: #ff3030; font-weight: 700; }
+        .command { font-size: 22px; fill: #eafff0; }
+        .prompt { font-size: 22px; fill: #00ff41; font-weight: 700; }
+        .cursor { font-size: 22px; fill: #00ff41; }
+        """
+    ).strip()
+
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="Matrix-style terminal profile for Vlad Voropaev">
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <radialGradient id="centerGlow" cx="50%" cy="48%" r="55%">
+      <stop offset="0%" stop-color="#00ff41" stop-opacity="0.13" />
+      <stop offset="55%" stop-color="#00ff41" stop-opacity="0.035" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <style>{style}</style>
+  </defs>
+  <rect width="100%" height="100%" fill="#000000" />
+  <rect width="100%" height="100%" fill="url(#centerGlow)" />
+  <g class="mono" font-size="16">{''.join(chunks)}</g>
+  <rect x="92" y="98" width="1016" height="284" rx="18" fill="#000c03" fill-opacity="0.82" stroke="#00ff41" stroke-opacity="0.36" stroke-width="1" />
+  <g class="mono">
+    <text x="132" y="132" class="eyebrow">{eyebrow}</text>
+    <text x="132" y="184" class="title">{title}</text>
+    <text x="132" y="232" class="subtitle">{subtitle}</text>
+    <text x="132" y="272" class="lead">{lead}</text>
+    <rect x="132" y="318" width="936" height="56" rx="6" fill="#00ff41" fill-opacity="0.045" stroke="#00ff41" stroke-opacity="0.22" />
+    <text x="156" y="356" class="prompt">$</text>
+    {terminal}
   </g>
-  <rect x="92" y="112" width="1016" height="256" rx="20" fill="#000c03" fill-opacity="0.78" stroke="#00ff41" stroke-opacity="0.45"/>
-  <rect x="92" y="112" width="1016" height="2" fill="#ff3030" opacity="0.8"/>
-  <text x="132" y="190" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace" font-size="42" fill="#e4ffeb">Vlad Voropaev · vladthecyborg</text>
-  <text x="132" y="242" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace" font-size="22" fill="#00ff41">AI systems · research tools · visual explanations</text>
-  <text x="132" y="294" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace" font-size="16" fill="#a8ffbe">strange questions -> mechanisms -> useful tools -> public artifacts</text>
-  <text x="132" y="334" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace" font-size="16" fill="#ff3030">SOURCE MAP · CLAIM MATRIX · LOCAL AI · COMPUTER VISION</text>
-  <style>.red{{fill:#ff3030;font-weight:700;letter-spacing:0}}</style>
-</svg>'''
+</svg>
+'''
     (ASSETS / "matrix-profile.svg").write_text(svg, encoding="utf-8")
 
 
 def main() -> None:
-    frames = generate_frames()
-    frames[0].save(
-        ASSETS / "matrix-profile.gif",
-        save_all=True,
-        append_images=frames[1:],
-        duration=DURATION_MS,
-        loop=0,
-        optimize=True,
-    )
-    frames[0].save(ASSETS / "matrix-preview.png")
-    write_svg()
+    config = load_config()
+    sync_docs_config()
+    write_svg(config)
+    write_preview_png(config)
 
 
 if __name__ == "__main__":

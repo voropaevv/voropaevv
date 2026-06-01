@@ -1,60 +1,122 @@
 # Matrix implementation notes
 
-## What was ported
+## Final structure
 
-The interactive GitHub Pages layer keeps the uploaded Matrix code's core behavior:
+The profile uses two layers:
 
-- mixed ASCII + Japanese glyph alphabet;
-- background random glyph cells;
-- falling column streams;
-- stream trails with fading alpha;
-- highlighted words injected into streams;
-- cursor-reactive glyph spawning;
-- source priority between background, cursor, and falling streams;
-- resize-aware canvas rendering;
-- `requestAnimationFrame` render loop.
+1. `README.md` — GitHub-safe visual profile using `assets/matrix-profile.svg`.
+2. `docs/` — real cursor-reactive Matrix page published with GitHub Pages.
 
-## What changed
+The README does not attempt to run JavaScript. The interactive canvas lives only in GitHub Pages.
 
-The highlighted words are tuned for Vlad Voropaev / vladthecyborg and shared
-between the canvas and generated README assets:
+## Shared configuration
 
-`VLAD`, `VOROPAEV`, `VOROPAEVV`, `QUESTIONS`, `STRANGE`, `WHY`, `HOW`,
-`WHAT IF`, `BUILDING`, `RESEARCH`, `SYSTEMS`, `AI AGENTS`, `LOCAL AI`,
-`LOCAL FIRST`, `CHAT EXPORTER`, `SOURCE MAP`, `CLAIM MATRIX`, `MECHANISMS`,
-`EVIDENCE`, `UNCERTAINTY`, `VISUAL STORIES`, `DEEP EXPLANATIONS`,
-`EXPLAINERS`, `PYTHON`, `TYPESCRIPT`, `COMPUTER VISION`, `AUTOMATION`,
-`NOTEBOOKS`, `DATA`, `DIAGRAMS`, `SCRIPTS`, `PROTOTYPES`, `AUDITABLE`,
-`READABLE`, `STRUCTURE`, `TOOLS`, `CODE`, `GITHUB`, `README`, `FINDINGS`,
-`BUILD AND SHARE`.
+The source of truth is:
 
-Colors:
+```text
+matrix.config.json
+```
 
-- falling symbols: green;
-- highlighted words: red;
-- cursor reaction: white-green;
-- background: black.
+It controls:
 
-## GitHub limitation
+- identity text;
+- tags;
+- links;
+- terminal prompts;
+- highlighted red Matrix words;
+- main colors;
+- animation parameters.
 
-GitHub profile README cannot run the canvas JavaScript directly. The README uses an animated GIF/SVG visual header. The cursor-reactive version lives in `docs/` and is published through GitHub Pages.
+The generator copies this config to:
 
-The page respects `prefers-reduced-motion` by rendering a static frame and
-stops the animation frame loop while the tab is hidden.
+```text
+docs/matrix.config.json
+```
 
-The generated GIF/PNG must be rendered with a Japanese-capable font. The
-generator prefers Hiragino/Noto CJK fonts and the GitHub Actions workflow
-installs `fonts-noto-cjk` before regenerating assets.
+The Pages JavaScript loads that copy at runtime.
 
-## Update workflow
+## User-facing positioning
 
-Edit words in two places:
+Final identity:
 
-- `docs/js/matrix.js` for the live interactive page;
-- `scripts/generate_matrix_assets.py` for the README GIF/SVG.
+```text
+Vlad Voropaev · Vlad the Cyborg
+```
 
-Then run:
+Profile sentence:
+
+```text
+I like understanding complicated things, building useful tools, and turning what I find into something other people can use.
+```
+
+Top tags:
+
+```text
+AI systems · local-first tools · research workflows · automation
+```
+
+## Matrix terms
+
+The highlighted red terms are tuned around Vlad's current public GitHub direction:
+
+- `VLAD THE CYBORG`
+- `QUESTIONS`
+- `SYSTEMS`
+- `AI AGENTS`
+- `LOCAL FIRST`
+- `AUTOMATION`
+- `CODEX`
+- `DATA`
+- `DIAGRAMS`
+- `SCRIPTS`
+- `PROTOTYPES`
+- `TOOLS`
+- `CODE`
+- `GITHUB`
+- plus related terms for local AI, browser extension work, chat export, archives, visual explanations, and open-source utilities.
+
+## Terminal prompt behavior
+
+The rectangle inside the SVG and Pages panel is now terminal-like.
+
+It rotates through prompts about the first public project:
+
+```text
+design a local-first browser extension for exporting AI chats
+turn local AI conversations into readable archives
+structure exported chats for search, backup, and reuse
+prototype the small tool before the system gets complicated
+publish the useful version when it can stand alone
+```
+
+In README, this is SVG animation. In Pages, it is JavaScript typing/erasing text.
+
+## Removed from README
+
+The final README intentionally removes:
+
+- `Current build` block;
+- `What I usually build` block;
+- `Working interests` table;
+- UAE footer;
+- prompt list lines like `take a strange question apart`.
+
+## Regeneration
+
+Run:
 
 ```bash
 python scripts/generate_matrix_assets.py
+python -m unittest tests/test_matrix_assets.py
+node --check docs/js/matrix.js
 ```
+
+Generated/updated files:
+
+```text
+assets/matrix-profile.svg
+assets/matrix-preview.png
+docs/matrix.config.json
+```
+
+The GitHub Actions workflow regenerates assets when `matrix.config.json` or the generator changes.

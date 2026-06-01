@@ -1,6 +1,48 @@
 (function () {
   "use strict";
 
+  const DEFAULT_CONFIG = {
+    identity: {
+      title: "Vlad Voropaev · Vlad the Cyborg",
+      lead: "I like understanding complicated things, building useful tools, and turning what I find into something other people can use.",
+      eyebrow: "terminal://public-profile",
+    },
+    tags: ["AI systems", "local-first tools", "research workflows", "automation"],
+    links: [
+      { label: "GitHub profile", url: "https://github.com/voropaevv" },
+      { label: "local-ai-chat-exporter", url: "https://github.com/voropaevv/local-ai-chat-exporter" },
+    ],
+    terminalPrompts: [
+      "design a local-first browser extension for exporting AI chats",
+      "turn local AI conversations into readable archives",
+      "structure exported chats for search, backup, and reuse",
+      "prototype the small tool before the system gets complicated",
+      "publish the useful version when it can stand alone",
+    ],
+    highlightWords: [
+      "VLAD THE CYBORG", "VOROPAEV", "QUESTIONS", "SYSTEMS", "AI AGENTS",
+      "LOCAL FIRST", "LOCAL AI", "RESEARCH WORKFLOWS", "AUTOMATION", "CODEX",
+      "DATA", "DIAGRAMS", "SCRIPTS", "PROTOTYPES", "TOOLS", "CODE", "GITHUB",
+      "BROWSER EXTENSION", "CHAT EXPORTER", "LOCAL AI CHAT EXPORTER", "CHAT ARCHIVE",
+      "VISUAL EXPLANATIONS", "OPEN SOURCE",
+    ],
+    colors: {
+      background: "#000000",
+      green: "#00ff41",
+      greenDim: "#00451f",
+      greenHead: "#c5ffd6",
+      cursor: "#eafff0",
+      red: "#ff3030",
+    },
+    animation: {
+      wordProbability: 0.84,
+      fallStreamCount: 58,
+      cursorRadiusPx: 128,
+      cursorSpawnPerFrame: 42,
+      baseFontSize: 16,
+    },
+  };
+
   const GLYPHS_ASCII =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
     "abcdefghijklmnopqrstuvwxyz" +
@@ -14,25 +56,6 @@
     "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽぁぃぅぇぉゃゅょっー・";
 
   const GLYPHS = GLYPHS_ASCII + GLYPHS_JP_KATAKANA + GLYPHS_JP_HIRAGANA;
-
-  const WORDS = [
-    "VLAD", "VOROPAEV", "VOROPAEVV", "QUESTIONS", "STRANGE", "WHY", "HOW", "WHAT IF",
-    "BUILDING", "RESEARCH", "SYSTEMS", "AI AGENTS", "LOCAL AI", "LOCAL FIRST",
-    "CHAT EXPORTER", "SOURCE MAP", "CLAIM MATRIX", "MECHANISMS", "EVIDENCE",
-    "UNCERTAINTY", "VISUAL STORIES", "DEEP EXPLANATIONS", "EXPLAINERS", "PYTHON",
-    "TYPESCRIPT", "COMPUTER VISION", "AUTOMATION", "NOTEBOOKS", "DATA", "DIAGRAMS",
-    "SCRIPTS", "PROTOTYPES", "AUDITABLE", "READABLE", "STRUCTURE", "TOOLS", "CODE",
-    "GITHUB", "README", "FINDINGS", "BUILD AND SHARE"
-  ];
-
-  const COLOR_FALLING = "#00ff41";
-  const COLOR_BACKGROUND = "#00451f";
-  const COLOR_CURSOR = "#eafff0";
-  const COLOR_HEAD_FIRST = "#c5ffd6";
-  const COLOR_WORD = "#ff3030";
-  const COLOR_BG_FILL = "#000000";
-
-  const WORD_PROBABILITY = 0.86;
 
   const SRC_EMPTY = 0;
   const SRC_BACKGROUND = 1;
@@ -63,12 +86,8 @@
     FADE_PER_MS: 0.00045,
   };
 
-  const FALL_STREAM_COUNT = 58;
-
   const CURSOR_CFG = {
     ENABLED: true,
-    RADIUS_PX: 128,
-    SPAWN_PER_FRAME: 44,
     ALPHA_START: 1,
     FADE_PER_MS: 0.0007,
     SIGMA_FRACTION: 0.3,
@@ -78,27 +97,28 @@
   const ROW_GAP_PX = 1;
   const DPR_CAP = 2;
 
-  const canvas = document.getElementById("rain");
-  if (!canvas) return;
+  function mergeConfig(base, override) {
+    const out = { ...base, ...override };
+    out.identity = { ...base.identity, ...(override.identity || {}) };
+    out.colors = { ...base.colors, ...(override.colors || {}) };
+    out.animation = { ...base.animation, ...(override.animation || {}) };
+    out.tags = override.tags || base.tags;
+    out.links = override.links || base.links;
+    out.terminalPrompts = override.terminalPrompts || base.terminalPrompts;
+    out.highlightWords = override.highlightWords || base.highlightWords;
+    return out;
+  }
 
-  const ctx = canvas.getContext("2d", { alpha: false });
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  let DPR = Math.min(window.devicePixelRatio || 1, DPR_CAP);
-  let cssW = 0;
-  let cssH = 0;
-  let cols = 0;
-  let rows = 0;
-  let fontSize = 0;
-  let rowHeight = 0;
-
-  let grid = [];
-  let columns = [];
-  let cursorX = 0;
-  let cursorY = 0;
-  let cursorActive = false;
-  let bgSpawnAcc = 0;
-  let animationFrameId = 0;
+  async function loadConfig() {
+    try {
+      const response = await fetch("matrix.config.json", { cache: "no-store" });
+      if (!response.ok) return DEFAULT_CONFIG;
+      const remoteConfig = await response.json();
+      return mergeConfig(DEFAULT_CONFIG, remoteConfig);
+    } catch (_error) {
+      return DEFAULT_CONFIG;
+    }
+  }
 
   function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -108,302 +128,379 @@
     return str.charAt(Math.floor(Math.random() * str.length));
   }
 
-  function pickWord() {
-    return WORDS[Math.floor(Math.random() * WORDS.length)] || "";
+  function applyTextConfig(config) {
+    const titleEl = document.querySelector('[data-config="title"]');
+    const leadEl = document.querySelector('[data-config="lead"]');
+    const eyebrowEl = document.querySelector('[data-config="eyebrow"]');
+    const chipsEl = document.getElementById("chips");
+    const linksEl = document.getElementById("links");
+
+    if (titleEl && config.identity.title) titleEl.textContent = config.identity.title;
+    if (leadEl && config.identity.lead) leadEl.textContent = config.identity.lead;
+    if (eyebrowEl && config.identity.eyebrow) eyebrowEl.textContent = config.identity.eyebrow;
+
+    if (chipsEl && Array.isArray(config.tags)) {
+      chipsEl.innerHTML = "";
+      config.tags.forEach((tag) => {
+        const span = document.createElement("span");
+        span.textContent = tag;
+        chipsEl.appendChild(span);
+      });
+    }
+
+    if (linksEl && Array.isArray(config.links)) {
+      linksEl.innerHTML = "";
+      config.links.forEach((link) => {
+        const anchor = document.createElement("a");
+        anchor.href = link.url;
+        anchor.textContent = link.label;
+        linksEl.appendChild(anchor);
+      });
+    }
   }
 
-  function makeEmptyCell() {
-    return { ch: "", alpha: 0, source: SRC_EMPTY, color: COLOR_FALLING };
-  }
+  function startTerminal(config, reducedMotion) {
+    const commandEl = document.getElementById("typed-command");
+    if (!commandEl) return;
 
-  function createGrid() {
-    grid = [];
-    for (let r = 0; r < rows; r += 1) {
-      const rowArr = [];
-      for (let c = 0; c < cols; c += 1) {
-        rowArr.push(makeEmptyCell());
+    const prompts = Array.isArray(config.terminalPrompts) && config.terminalPrompts.length
+      ? config.terminalPrompts
+      : DEFAULT_CONFIG.terminalPrompts;
+
+    if (reducedMotion) {
+      commandEl.textContent = prompts[0];
+      return;
+    }
+
+    let promptIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
+    let pauseUntil = 0;
+
+    function tick(now) {
+      const current = prompts[promptIndex] || "";
+      if (pauseUntil && now < pauseUntil) {
+        window.setTimeout(() => tick(performance.now()), 80);
+        return;
       }
-      grid.push(rowArr);
-    }
-  }
+      pauseUntil = 0;
 
-  function setCell(r, c, ch, alpha, source, color) {
-    if (r < 0 || r >= rows || c < 0 || c >= cols) return;
-    const current = grid[r][c];
-    if (SOURCE_PRIORITY[source] < SOURCE_PRIORITY[current.source]) return;
-    current.ch = ch;
-    current.alpha = alpha;
-    current.source = source;
-    current.color = color;
-  }
-
-  function resize() {
-    cssW = window.innerWidth;
-    cssH = window.innerHeight;
-    DPR = Math.min(window.devicePixelRatio || 1, DPR_CAP);
-
-    canvas.width = Math.floor(cssW * DPR);
-    canvas.height = Math.floor(cssH * DPR);
-    canvas.style.width = `${cssW}px`;
-    canvas.style.height = `${cssH}px`;
-
-    fontSize = Math.max(12, Math.round(BASE_FONT_SIZE * DPR));
-    const gap = Math.max(0, Math.round(ROW_GAP_PX * DPR));
-    rowHeight = fontSize + gap;
-
-    ctx.font = `${fontSize}px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace`;
-    ctx.textBaseline = "top";
-
-    cols = Math.max(1, Math.floor(canvas.width / fontSize));
-    rows = Math.max(1, Math.floor(canvas.height / rowHeight));
-
-    createGrid();
-    createColumns();
-
-    ctx.fillStyle = COLOR_BG_FILL;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-
-  function createColumns() {
-    columns = [];
-    const totalStreams = Math.min(cols, FALL_STREAM_COUNT);
-    const colIndexes = Array.from({ length: cols }, (_, i) => i);
-
-    for (let i = colIndexes.length - 1; i > 0; i -= 1) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [colIndexes[i], colIndexes[j]] = [colIndexes[j], colIndexes[i]];
-    }
-
-    const picked = colIndexes.slice(0, totalStreams);
-    for (const colIndex of picked) {
-      columns.push(makeColumnState(colIndex));
-    }
-  }
-
-  function makeColumnState(colIndex) {
-    const trailLen = randInt(FALL_CFG.MIN_TRAIL, FALL_CFG.MAX_TRAIL);
-    const rowsPerSec =
-      (FALL_CFG.MIN_ROWS_PER_SEC + Math.random() * (FALL_CFG.MAX_ROWS_PER_SEC - FALL_CFG.MIN_ROWS_PER_SEC)) *
-      FALL_CFG.SPEED_SCALE;
-    const wantWord = Math.random() < WORD_PROBABILITY;
-    const word = wantWord ? pickWord().replace(/\s+/g, "·") : "";
-    const wordStartRow = wantWord ? randInt(0, Math.max(0, rows - 1)) : -1;
-
-    return {
-      col: colIndex,
-      row: -randInt(0, rows),
-      rowsPerMs: rowsPerSec / 1000,
-      trail: trailLen,
-      acc: 0,
-      lastChar: "",
-      lastColor: COLOR_FALLING,
-      word,
-      wordPos: 0,
-      wordStartRow,
-    };
-  }
-
-  function updateBackground(dtMs) {
-    bgSpawnAcc += dtMs;
-    if (bgSpawnAcc < BG_CFG.SPAWN_INTERVAL_MS) return;
-    bgSpawnAcc = 0;
-
-    for (let i = 0; i < BG_CFG.SPAWN_COUNT; i += 1) {
-      const r = randInt(0, rows - 1);
-      const c = randInt(0, cols - 1);
-      const ch = randChoice(GLYPHS);
-      setCell(r, c, ch, BG_CFG.ALPHA_START, SRC_BACKGROUND, COLOR_BACKGROUND);
-    }
-  }
-
-  function updateColumns(dtMs) {
-    for (let i = 0; i < columns.length; i += 1) {
-      const col = columns[i];
-      col.acc += col.rowsPerMs * dtMs;
-
-      while (col.acc >= 1) {
-        const prevRow = col.row;
-        if (prevRow >= 0 && prevRow < rows && col.lastChar) {
-          setCell(prevRow, col.col, col.lastChar, FALL_CFG.TRAIL_ALPHA, SRC_FALLING, col.lastColor);
+      if (!deleting) {
+        charIndex = Math.min(current.length, charIndex + 1);
+        commandEl.textContent = current.slice(0, charIndex);
+        if (charIndex >= current.length) {
+          deleting = true;
+          pauseUntil = now + 1300;
         }
-
-        col.row += 1;
-        const r = col.row;
-
-        let ch;
-        let color;
-        const isInWord =
-          col.word &&
-          col.wordStartRow >= 0 &&
-          r === col.wordStartRow + col.wordPos &&
-          col.wordPos < col.word.length;
-
-        if (isInWord) {
-          ch = col.word[col.wordPos];
-          color = COLOR_WORD;
-          col.wordPos += 1;
-        } else {
-          ch = randChoice(GLYPHS);
-          color = COLOR_FALLING;
-        }
-
-        if (r >= 0 && r < rows) {
-          setCell(r, col.col, ch, FALL_CFG.HEAD_ALPHA, SRC_FALLING, color === COLOR_WORD ? COLOR_WORD : COLOR_HEAD_FIRST);
-        }
-
-        col.lastChar = ch;
-        col.lastColor = color;
-        col.acc -= 1;
-
-        if (r - col.trail > rows) {
-          columns[i] = makeColumnState(col.col);
-          break;
+      } else {
+        charIndex = Math.max(0, charIndex - 2);
+        commandEl.textContent = current.slice(0, charIndex);
+        if (charIndex <= 0) {
+          deleting = false;
+          promptIndex = (promptIndex + 1) % prompts.length;
+          pauseUntil = now + 280;
         }
       }
+
+      const delay = deleting ? 26 : 42 + Math.random() * 36;
+      window.setTimeout(() => tick(performance.now()), delay);
     }
+
+    commandEl.textContent = "";
+    tick(performance.now());
   }
 
-  function spawnCursorGlyphs() {
-    if (!CURSOR_CFG.ENABLED || !cursorActive) return;
+  function startMatrix(config, reducedMotion) {
+    const canvas = document.getElementById("rain");
+    if (!canvas) return;
 
-    const R = CURSOR_CFG.RADIUS_PX * DPR;
-    const sigma = Math.max(1, R * CURSOR_CFG.SIGMA_FRACTION);
-    const twoSigma2 = 2 * sigma * sigma;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    const colors = config.colors || DEFAULT_CONFIG.colors;
+    const animation = config.animation || DEFAULT_CONFIG.animation;
+    const words = Array.isArray(config.highlightWords) ? config.highlightWords : DEFAULT_CONFIG.highlightWords;
+    const wordProbability = Number(animation.wordProbability || DEFAULT_CONFIG.animation.wordProbability);
+    const fallStreamCount = Number(animation.fallStreamCount || DEFAULT_CONFIG.animation.fallStreamCount);
+    const cursorRadiusPx = Number(animation.cursorRadiusPx || DEFAULT_CONFIG.animation.cursorRadiusPx);
+    const cursorSpawnPerFrame = Number(animation.cursorSpawnPerFrame || DEFAULT_CONFIG.animation.cursorSpawnPerFrame);
 
-    for (let i = 0; i < CURSOR_CFG.SPAWN_PER_FRAME; i += 1) {
-      const u = Math.random();
-      const r = R * Math.sqrt(u);
-      const theta = Math.random() * Math.PI * 2;
-      const x = cursorX + r * Math.cos(theta);
-      const y = cursorY + r * Math.sin(theta);
-      const c = Math.floor(x / fontSize);
-      const row = Math.floor(y / rowHeight);
+    let dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+    let cssW = 0;
+    let cssH = 0;
+    let cols = 0;
+    let rows = 0;
+    let fontSize = 0;
+    let rowHeight = 0;
+    let grid = [];
+    let columns = [];
+    let cursorX = 0;
+    let cursorY = 0;
+    let cursorActive = false;
+    let bgSpawnAcc = 0;
+    let animationFrameId = 0;
+    let lastTs = 0;
+    let stopped = false;
 
-      if (c < 0 || c >= cols || row < 0 || row >= rows) continue;
-
-      const alpha0 = Math.exp(-(r * r) / twoSigma2);
-      if (alpha0 < 0.05) continue;
-
-      const ch = randChoice(GLYPHS);
-      setCell(row, c, ch, CURSOR_CFG.ALPHA_START * alpha0, SRC_CURSOR, COLOR_CURSOR);
+    function makeEmptyCell() {
+      return { ch: "", alpha: 0, source: SRC_EMPTY, color: colors.green };
     }
-  }
 
-  function fadeGrid(dtMs) {
-    for (let r = 0; r < rows; r += 1) {
-      const rowArr = grid[r];
-      for (let c = 0; c < cols; c += 1) {
-        const cell = rowArr[c];
-        if (cell.alpha <= 0) continue;
-
-        let fadeRate = 0.002;
-        if (cell.source === SRC_BACKGROUND) fadeRate = BG_CFG.FADE_PER_MS;
-        else if (cell.source === SRC_FALLING) fadeRate = FALL_CFG.FADE_PER_MS;
-        else if (cell.source === SRC_CURSOR) fadeRate = CURSOR_CFG.FADE_PER_MS;
-
-        cell.alpha -= fadeRate * dtMs;
-        if (cell.alpha <= 0) {
-          cell.alpha = 0;
-          cell.ch = "";
-          cell.source = SRC_EMPTY;
-          cell.color = COLOR_FALLING;
+    function createGrid() {
+      grid = [];
+      for (let r = 0; r < rows; r += 1) {
+        const rowArr = [];
+        for (let c = 0; c < cols; c += 1) {
+          rowArr.push(makeEmptyCell());
         }
-      }
-    }
-  }
-
-  function renderGrid() {
-    ctx.fillStyle = COLOR_BG_FILL;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    for (let r = 0; r < rows; r += 1) {
-      const y = r * rowHeight;
-      const rowArr = grid[r];
-      for (let c = 0; c < cols; c += 1) {
-        const cell = rowArr[c];
-        if (cell.alpha <= 0) continue;
-        ctx.globalAlpha = cell.alpha;
-        ctx.fillStyle = cell.color;
-        ctx.fillText(cell.ch, c * fontSize, y);
+        grid.push(rowArr);
       }
     }
 
-    ctx.globalAlpha = 1;
-  }
-
-  function drawStaticFrame() {
-    updateBackground(1000);
-    updateColumns(1000);
-    renderGrid();
-  }
-
-  let lastTs = performance.now();
-  function drawFrame(now) {
-    const dtMs = Math.min(50, now - lastTs);
-    lastTs = now;
-
-    updateBackground(dtMs);
-    updateColumns(dtMs);
-    spawnCursorGlyphs();
-    fadeGrid(dtMs);
-    renderGrid();
-
-    animationFrameId = requestAnimationFrame(drawFrame);
-  }
-
-  function stopAnimation() {
-    if (!animationFrameId) return;
-    cancelAnimationFrame(animationFrameId);
-    animationFrameId = 0;
-  }
-
-  function startAnimation() {
-    if (prefersReducedMotion || document.hidden || animationFrameId) return;
-    lastTs = performance.now();
-    animationFrameId = requestAnimationFrame(drawFrame);
-  }
-
-  function updateCursorFromClient(clientX, clientY) {
-    const rect = canvas.getBoundingClientRect();
-    cursorX = (clientX - rect.left) * DPR;
-    cursorY = (clientY - rect.top) * DPR;
-    cursorActive = true;
-  }
-
-  function deactivateCursor() {
-    cursorActive = false;
-  }
-
-  resize();
-  window.addEventListener("resize", resize);
-  window.addEventListener("mousemove", (event) => updateCursorFromClient(event.clientX, event.clientY), { passive: true });
-  window.addEventListener("mouseleave", deactivateCursor, { passive: true });
-  window.addEventListener(
-    "touchmove",
-    (event) => {
-      if (!event.touches || event.touches.length === 0) return;
-      const touch = event.touches[0];
-      updateCursorFromClient(touch.clientX, touch.clientY);
-    },
-    { passive: true },
-  );
-  window.addEventListener("touchend", deactivateCursor, { passive: true });
-  window.addEventListener("touchcancel", deactivateCursor, { passive: true });
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      deactivateCursor();
-      stopAnimation();
-    } else {
-      startAnimation();
+    function setCell(r, c, ch, alpha, source, color) {
+      if (r < 0 || r >= rows || c < 0 || c >= cols) return;
+      const cell = grid[r][c];
+      if (SOURCE_PRIORITY[source] < SOURCE_PRIORITY[cell.source] && cell.alpha > 0.15) return;
+      cell.ch = ch;
+      cell.alpha = Math.max(cell.alpha, alpha);
+      cell.source = source;
+      cell.color = color;
     }
-  });
 
-  if (prefersReducedMotion) {
-    drawStaticFrame();
-    return;
+    function pickWord() {
+      return words[Math.floor(Math.random() * words.length)] || "";
+    }
+
+    function makeColumnState(colIndex) {
+      const trailLen = randInt(FALL_CFG.MIN_TRAIL, FALL_CFG.MAX_TRAIL);
+      const rowsPerSec =
+        (FALL_CFG.MIN_ROWS_PER_SEC + Math.random() * (FALL_CFG.MAX_ROWS_PER_SEC - FALL_CFG.MIN_ROWS_PER_SEC)) *
+        FALL_CFG.SPEED_SCALE;
+      const wantWord = Math.random() < wordProbability;
+      const word = wantWord ? pickWord().replace(/\s+/g, "·") : "";
+      const wordStartRow = wantWord ? randInt(0, Math.max(0, rows - 1)) : -1;
+
+      return {
+        col: colIndex,
+        row: -randInt(0, rows || 1),
+        rowsPerMs: rowsPerSec / 1000,
+        trail: trailLen,
+        acc: 0,
+        lastChar: "",
+        lastColor: colors.green,
+        word,
+        wordPos: 0,
+        wordStartRow,
+      };
+    }
+
+    function createColumns() {
+      columns = [];
+      if (!cols) return;
+      const available = Array.from({ length: cols }, (_value, index) => index);
+      const count = Math.min(cols, fallStreamCount);
+      for (let i = 0; i < count; i += 1) {
+        const idx = Math.floor(Math.random() * available.length);
+        const col = available.splice(idx, 1)[0];
+        columns.push(makeColumnState(col));
+      }
+    }
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+      cssW = Math.max(1, window.innerWidth);
+      cssH = Math.max(1, window.innerHeight);
+      fontSize = Math.max(13, Math.round(Number(animation.baseFontSize || BASE_FONT_SIZE) * Math.min(1.15, Math.max(0.86, cssW / 1400))));
+      rowHeight = fontSize + ROW_GAP_PX;
+      cols = Math.ceil(cssW / fontSize);
+      rows = Math.ceil(cssH / rowHeight);
+
+      canvas.width = Math.floor(cssW * dpr);
+      canvas.height = Math.floor(cssH * dpr);
+      canvas.style.width = `${cssW}px`;
+      canvas.style.height = `${cssH}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.font = `${fontSize}px ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans CJK JP", monospace`;
+      ctx.textBaseline = "top";
+
+      createGrid();
+      createColumns();
+    }
+
+    function updateBackground(dtMs) {
+      bgSpawnAcc += dtMs;
+      if (bgSpawnAcc < BG_CFG.SPAWN_INTERVAL_MS) return;
+      bgSpawnAcc = 0;
+
+      for (let i = 0; i < BG_CFG.SPAWN_COUNT; i += 1) {
+        const r = randInt(0, rows - 1);
+        const c = randInt(0, cols - 1);
+        setCell(r, c, randChoice(GLYPHS), BG_CFG.ALPHA_START, SRC_BACKGROUND, colors.greenDim);
+      }
+    }
+
+    function updateColumns(dtMs) {
+      for (let i = 0; i < columns.length; i += 1) {
+        const col = columns[i];
+        col.acc += col.rowsPerMs * dtMs;
+
+        while (col.acc >= 1) {
+          const prevRow = col.row;
+          if (prevRow >= 0 && prevRow < rows && col.lastChar) {
+            setCell(prevRow, col.col, col.lastChar, FALL_CFG.TRAIL_ALPHA, SRC_FALLING, col.lastColor);
+          }
+
+          col.row += 1;
+          const r = col.row;
+          let ch;
+          let color;
+          const isInWord =
+            col.word &&
+            col.wordStartRow >= 0 &&
+            r === col.wordStartRow + col.wordPos &&
+            col.wordPos < col.word.length;
+
+          if (isInWord) {
+            ch = col.word[col.wordPos];
+            color = colors.red;
+            col.wordPos += 1;
+          } else {
+            ch = randChoice(GLYPHS);
+            color = colors.green;
+          }
+
+          if (r >= 0 && r < rows) {
+            setCell(r, col.col, ch, FALL_CFG.HEAD_ALPHA, SRC_FALLING, color === colors.red ? colors.red : colors.greenHead);
+          }
+
+          col.lastChar = ch;
+          col.lastColor = color;
+          col.acc -= 1;
+
+          if (r - col.trail > rows) {
+            columns[i] = makeColumnState(col.col);
+            break;
+          }
+        }
+      }
+    }
+
+    function updateCursor() {
+      if (!CURSOR_CFG.ENABLED || !cursorActive) return;
+      const sigma = Math.max(1, cursorRadiusPx * CURSOR_CFG.SIGMA_FRACTION);
+
+      for (let i = 0; i < cursorSpawnPerFrame; i += 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.sqrt(Math.random()) * cursorRadiusPx;
+        const px = cursorX + Math.cos(angle) * radius;
+        const py = cursorY + Math.sin(angle) * radius;
+        const c = Math.floor(px / fontSize);
+        const r = Math.floor(py / rowHeight);
+        const distSq = (px - cursorX) ** 2 + (py - cursorY) ** 2;
+        const alpha = Math.exp(-distSq / (2 * sigma * sigma)) * CURSOR_CFG.ALPHA_START;
+        if (alpha > 0.08) {
+          setCell(r, c, randChoice(GLYPHS), alpha, SRC_CURSOR, colors.cursor);
+        }
+      }
+    }
+
+    function fadeCells(dtMs) {
+      for (let r = 0; r < rows; r += 1) {
+        for (let c = 0; c < cols; c += 1) {
+          const cell = grid[r][c];
+          if (cell.alpha <= 0) continue;
+          const fade = cell.source === SRC_CURSOR
+            ? CURSOR_CFG.FADE_PER_MS
+            : cell.source === SRC_FALLING
+              ? FALL_CFG.FADE_PER_MS
+              : BG_CFG.FADE_PER_MS;
+          cell.alpha -= fade * dtMs;
+          if (cell.alpha <= 0.02) {
+            grid[r][c] = makeEmptyCell();
+          }
+        }
+      }
+    }
+
+    function draw() {
+      ctx.fillStyle = colors.background;
+      ctx.fillRect(0, 0, cssW, cssH);
+      for (let r = 0; r < rows; r += 1) {
+        const y = r * rowHeight;
+        for (let c = 0; c < cols; c += 1) {
+          const cell = grid[r][c];
+          if (!cell.ch || cell.alpha <= 0) continue;
+          ctx.globalAlpha = Math.max(0, Math.min(1, cell.alpha));
+          ctx.fillStyle = cell.color;
+          ctx.fillText(cell.ch, c * fontSize, y);
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function frame(ts) {
+      if (stopped) return;
+      const dtMs = lastTs ? Math.min(66, ts - lastTs) : 16;
+      lastTs = ts;
+      updateBackground(dtMs);
+      updateColumns(dtMs);
+      updateCursor();
+      fadeCells(dtMs);
+      draw();
+      animationFrameId = window.requestAnimationFrame(frame);
+    }
+
+    function renderStatic() {
+      updateBackground(500);
+      updateColumns(900);
+      draw();
+    }
+
+    function setCursorFromEvent(event) {
+      const touch = event.touches && event.touches.length ? event.touches[0] : event;
+      cursorX = touch.clientX;
+      cursorY = touch.clientY;
+      cursorActive = true;
+    }
+
+    function stopLoop() {
+      stopped = true;
+      if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
+      animationFrameId = 0;
+    }
+
+    function startLoop() {
+      if (reducedMotion) {
+        renderStatic();
+        return;
+      }
+      stopped = false;
+      lastTs = 0;
+      if (!animationFrameId) animationFrameId = window.requestAnimationFrame(frame);
+    }
+
+    window.addEventListener("resize", resize, { passive: true });
+    window.addEventListener("mousemove", setCursorFromEvent, { passive: true });
+    window.addEventListener("touchmove", setCursorFromEvent, { passive: true });
+    window.addEventListener("mouseleave", () => { cursorActive = false; }, { passive: true });
+    window.addEventListener("touchend", () => { cursorActive = false; }, { passive: true });
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        stopLoop();
+      } else {
+        startLoop();
+      }
+    });
+
+    resize();
+    startLoop();
   }
 
-  startAnimation();
+  async function main() {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const config = await loadConfig();
+    applyTextConfig(config);
+    startTerminal(config, reducedMotion);
+    startMatrix(config, reducedMotion);
+  }
 
-  window.addEventListener("pagehide", stopAnimation);
-})();
+  main();
+}());
