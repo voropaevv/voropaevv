@@ -22,8 +22,10 @@ It controls:
 - identity text;
 - tags;
 - links;
+- README compact mode and Pages interactive mode;
 - terminal prompts;
 - highlighted red Matrix words;
+- cursor decode terms and command-mode messages;
 - main colors;
 - animation parameters.
 
@@ -57,23 +59,22 @@ AI systems · local-first tools · research workflows · automation
 
 ## Matrix terms
 
-The highlighted red terms are tuned around Vlad's current public GitHub direction:
+The highlighted red terms are intentionally sparse and tuned around Vlad's current public GitHub direction:
 
 - `VLAD THE CYBORG`
-- `QUESTIONS`
-- `SYSTEMS`
 - `AI AGENTS`
 - `LOCAL FIRST`
+- `CHAT EXPORTER`
+- `LOCAL CHAT`
+- `ARCHIVE`
+- `SEARCH`
+- `STRUCTURE`
 - `AUTOMATION`
 - `CODEX`
-- `DATA`
-- `DIAGRAMS`
-- `SCRIPTS`
-- `PROTOTYPES`
+- `PROTOTYPE`
+- `PUBLIC TOOL`
 - `TOOLS`
-- `CODE`
 - `GITHUB`
-- plus related terms for local AI, browser extension work, chat export, archives, visual explanations, and open-source utilities.
 
 ## Terminal prompt behavior
 
@@ -82,14 +83,23 @@ The rectangle inside the SVG and Pages panel is now terminal-like.
 It rotates through prompts about the first public project:
 
 ```text
-design a local-first browser extension for exporting AI chats
-turn local AI conversations into readable archives
-structure exported chats for search, backup, and reuse
-prototype the small tool before the system gets complicated
-publish the useful version when it can stand alone
+build local-ai-chat-exporter --target browser
+export ai-chats --format markdown,json
+index chat-archive --searchable --local-first
+package useful-parts --public
+prototype small-tool --before system-bloat
+publish when-useful --not-before
 ```
 
 In README, this is SVG animation. In Pages, it is JavaScript typing/erasing text.
+
+The README hero is compact and does not include the long lead sentence inside the SVG. The Pages panel keeps the lead and adds a status line plus command hint:
+
+```text
+try: help · project · tools · matrix · github
+```
+
+Keyboard command mode supports `h`, `p`, `t`, `m`, and `g`. The `m` command briefly boosts Matrix density; cursor movement also injects short white-green decode terms.
 
 ## Removed from README
 
@@ -116,7 +126,9 @@ Generated/updated files:
 ```text
 assets/matrix-profile.svg
 assets/matrix-preview.png
+assets/open-live-version.svg
 docs/matrix.config.json
+docs/public-profile.json
 ```
 
 The GitHub Actions workflow regenerates assets when `matrix.config.json` or the generator changes.

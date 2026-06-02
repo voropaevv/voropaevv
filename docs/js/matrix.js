@@ -12,20 +12,50 @@
       { label: "GitHub profile", url: "https://github.com/voropaevv" },
       { label: "local-ai-chat-exporter", url: "https://github.com/voropaevv/local-ai-chat-exporter" },
     ],
+    readme: {
+      mode: "compact",
+      showLeadInsideHero: false,
+      height: 360,
+      promptMaxLength: 62,
+    },
+    pages: {
+      mode: "interactive",
+      showLeadInsidePanel: true,
+      promptMaxLength: 96,
+    },
+    mobile: {
+      fallStreamCount: 32,
+      cursorSpawnPerFrame: 18,
+      promptMaxLength: 48,
+    },
+    status: {
+      mode: "public-profile",
+      build: "local-ai-chat-exporter",
+      state: "building public utility",
+    },
     terminalPrompts: [
-      "design a local-first browser extension for exporting AI chats",
-      "turn local AI conversations into readable archives",
-      "structure exported chats for search, backup, and reuse",
-      "prototype the small tool before the system gets complicated",
-      "publish the useful version when it can stand alone",
+      "build local-ai-chat-exporter --target browser",
+      "export ai-chats --format markdown,json",
+      "index chat-archive --searchable --local-first",
+      "package useful-parts --public",
+      "prototype small-tool --before system-bloat",
+      "publish when-useful --not-before",
     ],
     highlightWords: [
-      "VLAD THE CYBORG", "VOROPAEV", "QUESTIONS", "SYSTEMS", "AI AGENTS",
-      "LOCAL FIRST", "LOCAL AI", "RESEARCH WORKFLOWS", "AUTOMATION", "CODEX",
-      "DATA", "DIAGRAMS", "SCRIPTS", "PROTOTYPES", "TOOLS", "CODE", "GITHUB",
-      "BROWSER EXTENSION", "CHAT EXPORTER", "LOCAL AI CHAT EXPORTER", "CHAT ARCHIVE",
-      "VISUAL EXPLANATIONS", "OPEN SOURCE",
+      "VLAD THE CYBORG", "LOCAL FIRST", "AI AGENTS", "CHAT EXPORTER",
+      "LOCAL CHAT", "ARCHIVE", "SEARCH", "STRUCTURE", "AUTOMATION", "CODEX",
+      "PROTOTYPE", "PUBLIC TOOL", "TOOLS", "GITHUB",
     ],
+    cursorDecodeTerms: [
+      "LOCAL FIRST", "CHAT EXPORTER", "TOOLS", "CODEX", "AUTOMATION", "STRUCTURE",
+    ],
+    commandModes: {
+      help: "commands: help · project · tools · matrix · github",
+      project: "local-ai-chat-exporter: export AI chats into readable local archives",
+      tools: "focus: AI systems · local-first tools · research workflows · automation",
+      matrix: "matrix intensity boosted",
+      github: "opening github profile",
+    },
     colors: {
       background: "#000000",
       green: "#00ff41",
@@ -102,10 +132,16 @@
     out.identity = { ...base.identity, ...(override.identity || {}) };
     out.colors = { ...base.colors, ...(override.colors || {}) };
     out.animation = { ...base.animation, ...(override.animation || {}) };
+    out.readme = { ...base.readme, ...(override.readme || {}) };
+    out.pages = { ...base.pages, ...(override.pages || {}) };
+    out.mobile = { ...base.mobile, ...(override.mobile || {}) };
+    out.status = { ...base.status, ...(override.status || {}) };
+    out.commandModes = { ...base.commandModes, ...(override.commandModes || {}) };
     out.tags = override.tags || base.tags;
     out.links = override.links || base.links;
     out.terminalPrompts = override.terminalPrompts || base.terminalPrompts;
     out.highlightWords = override.highlightWords || base.highlightWords;
+    out.cursorDecodeTerms = override.cursorDecodeTerms || base.cursorDecodeTerms;
     return out;
   }
 
@@ -134,10 +170,14 @@
     const eyebrowEl = document.querySelector('[data-config="eyebrow"]');
     const chipsEl = document.getElementById("chips");
     const linksEl = document.getElementById("links");
+    const statusEl = document.getElementById("status-line");
 
     if (titleEl && config.identity.title) titleEl.textContent = config.identity.title;
     if (leadEl && config.identity.lead) leadEl.textContent = config.identity.lead;
     if (eyebrowEl && config.identity.eyebrow) eyebrowEl.textContent = config.identity.eyebrow;
+    if (statusEl && config.status) {
+      statusEl.textContent = `mode: ${config.status.mode} · build: ${config.status.build}`;
+    }
 
     if (chipsEl && Array.isArray(config.tags)) {
       chipsEl.innerHTML = "";
@@ -161,15 +201,28 @@
 
   function startTerminal(config, reducedMotion) {
     const commandEl = document.getElementById("typed-command");
-    if (!commandEl) return;
+    if (!commandEl) return { showMessage() {} };
 
-    const prompts = Array.isArray(config.terminalPrompts) && config.terminalPrompts.length
+    const rawPrompts = Array.isArray(config.terminalPrompts) && config.terminalPrompts.length
       ? config.terminalPrompts
       : DEFAULT_CONFIG.terminalPrompts;
+    const promptLimit = window.innerWidth <= 680
+      ? Number(config.mobile?.promptMaxLength || DEFAULT_CONFIG.mobile.promptMaxLength)
+      : Number(config.pages?.promptMaxLength || DEFAULT_CONFIG.pages.promptMaxLength);
+    const prompts = rawPrompts.map((prompt) => prompt.slice(0, promptLimit));
+
+    let forcedUntil = 0;
+    let forcedText = "";
+
+    function showMessage(text, durationMs = 2200) {
+      forcedText = text;
+      forcedUntil = performance.now() + durationMs;
+      commandEl.textContent = text;
+    }
 
     if (reducedMotion) {
       commandEl.textContent = prompts[0];
-      return;
+      return { showMessage };
     }
 
     let promptIndex = 0;
@@ -178,6 +231,17 @@
     let pauseUntil = 0;
 
     function tick(now) {
+      if (forcedUntil && now < forcedUntil) {
+        commandEl.textContent = forcedText;
+        window.setTimeout(() => tick(performance.now()), 80);
+        return;
+      }
+      if (forcedUntil) {
+        forcedUntil = 0;
+        charIndex = 0;
+        deleting = false;
+      }
+
       const current = prompts[promptIndex] || "";
       if (pauseUntil && now < pauseUntil) {
         window.setTimeout(() => tick(performance.now()), 80);
@@ -208,20 +272,25 @@
 
     commandEl.textContent = "";
     tick(performance.now());
+    return { showMessage };
   }
 
   function startMatrix(config, reducedMotion) {
     const canvas = document.getElementById("rain");
-    if (!canvas) return;
+    if (!canvas) return { boostRain() {} };
 
     const ctx = canvas.getContext("2d", { alpha: false });
     const colors = config.colors || DEFAULT_CONFIG.colors;
     const animation = config.animation || DEFAULT_CONFIG.animation;
+    const mobile = config.mobile || DEFAULT_CONFIG.mobile;
     const words = Array.isArray(config.highlightWords) ? config.highlightWords : DEFAULT_CONFIG.highlightWords;
+    const decodeTerms = Array.isArray(config.cursorDecodeTerms)
+      ? config.cursorDecodeTerms
+      : DEFAULT_CONFIG.cursorDecodeTerms;
     const wordProbability = Number(animation.wordProbability || DEFAULT_CONFIG.animation.wordProbability);
-    const fallStreamCount = Number(animation.fallStreamCount || DEFAULT_CONFIG.animation.fallStreamCount);
-    const cursorRadiusPx = Number(animation.cursorRadiusPx || DEFAULT_CONFIG.animation.cursorRadiusPx);
-    const cursorSpawnPerFrame = Number(animation.cursorSpawnPerFrame || DEFAULT_CONFIG.animation.cursorSpawnPerFrame);
+    let activeFallStreamCount = Number(animation.fallStreamCount || DEFAULT_CONFIG.animation.fallStreamCount);
+    let activeCursorRadiusPx = Number(animation.cursorRadiusPx || DEFAULT_CONFIG.animation.cursorRadiusPx);
+    let activeCursorSpawnPerFrame = Number(animation.cursorSpawnPerFrame || DEFAULT_CONFIG.animation.cursorSpawnPerFrame);
 
     let dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
     let cssW = 0;
@@ -239,6 +308,7 @@
     let animationFrameId = 0;
     let lastTs = 0;
     let stopped = false;
+    let rainBoostUntil = 0;
 
     function makeEmptyCell() {
       return { ch: "", alpha: 0, source: SRC_EMPTY, color: colors.green };
@@ -296,7 +366,7 @@
       columns = [];
       if (!cols) return;
       const available = Array.from({ length: cols }, (_value, index) => index);
-      const count = Math.min(cols, fallStreamCount);
+      const count = Math.min(cols, activeFallStreamCount);
       for (let i = 0; i < count; i += 1) {
         const idx = Math.floor(Math.random() * available.length);
         const col = available.splice(idx, 1)[0];
@@ -308,6 +378,18 @@
       dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
       cssW = Math.max(1, window.innerWidth);
       cssH = Math.max(1, window.innerHeight);
+      const isMobile = cssW <= 680;
+      activeFallStreamCount = Number(
+        isMobile
+          ? mobile.fallStreamCount || animation.fallStreamCount || DEFAULT_CONFIG.animation.fallStreamCount
+          : animation.fallStreamCount || DEFAULT_CONFIG.animation.fallStreamCount
+      );
+      activeCursorSpawnPerFrame = Number(
+        isMobile
+          ? mobile.cursorSpawnPerFrame || animation.cursorSpawnPerFrame || DEFAULT_CONFIG.animation.cursorSpawnPerFrame
+          : animation.cursorSpawnPerFrame || DEFAULT_CONFIG.animation.cursorSpawnPerFrame
+      );
+      activeCursorRadiusPx = Number(animation.cursorRadiusPx || DEFAULT_CONFIG.animation.cursorRadiusPx);
       fontSize = Math.max(13, Math.round(Number(animation.baseFontSize || BASE_FONT_SIZE) * Math.min(1.15, Math.max(0.86, cssW / 1400))));
       rowHeight = fontSize + ROW_GAP_PX;
       cols = Math.ceil(cssW / fontSize);
@@ -330,7 +412,11 @@
       if (bgSpawnAcc < BG_CFG.SPAWN_INTERVAL_MS) return;
       bgSpawnAcc = 0;
 
-      for (let i = 0; i < BG_CFG.SPAWN_COUNT; i += 1) {
+      const spawnCount = performance.now() < rainBoostUntil
+        ? BG_CFG.SPAWN_COUNT * 4
+        : BG_CFG.SPAWN_COUNT;
+
+      for (let i = 0; i < spawnCount; i += 1) {
         const r = randInt(0, rows - 1);
         const c = randInt(0, cols - 1);
         setCell(r, c, randChoice(GLYPHS), BG_CFG.ALPHA_START, SRC_BACKGROUND, colors.greenDim);
@@ -383,13 +469,29 @@
       }
     }
 
+    function spawnDecodeWord() {
+      if (!decodeTerms.length || Math.random() > 0.16) return;
+      const term = decodeTerms[Math.floor(Math.random() * decodeTerms.length)];
+      const word = String(term).replace(/\s+/g, "·");
+      if (!word) return;
+
+      const startCol = Math.floor(cursorX / fontSize) - Math.floor(word.length / 2);
+      const row = Math.floor(cursorY / rowHeight) + randInt(-1, 1);
+
+      for (let i = 0; i < word.length; i += 1) {
+        setCell(row, startCol + i, word[i], 0.95, SRC_CURSOR, colors.cursor);
+      }
+    }
+
     function updateCursor() {
       if (!CURSOR_CFG.ENABLED || !cursorActive) return;
-      const sigma = Math.max(1, cursorRadiusPx * CURSOR_CFG.SIGMA_FRACTION);
+      const sigma = Math.max(1, activeCursorRadiusPx * CURSOR_CFG.SIGMA_FRACTION);
 
-      for (let i = 0; i < cursorSpawnPerFrame; i += 1) {
+      spawnDecodeWord();
+
+      for (let i = 0; i < activeCursorSpawnPerFrame; i += 1) {
         const angle = Math.random() * Math.PI * 2;
-        const radius = Math.sqrt(Math.random()) * cursorRadiusPx;
+        const radius = Math.sqrt(Math.random()) * activeCursorRadiusPx;
         const px = cursorX + Math.cos(angle) * radius;
         const py = cursorY + Math.sin(angle) * radius;
         const c = Math.floor(px / fontSize);
@@ -492,14 +594,54 @@
 
     resize();
     startLoop();
+
+    return {
+      boostRain(durationMs = 4000) {
+        rainBoostUntil = performance.now() + durationMs;
+      },
+    };
+  }
+
+  function setupCommandMode(config, terminalController, matrixController) {
+    const modes = config.commandModes || DEFAULT_CONFIG.commandModes;
+    const githubUrl = config.identity?.profileUrl || "https://github.com/voropaevv";
+    const handledKeys = new Set(["h", "?", "p", "t", "m", "g"]);
+
+    function showMode(name, durationMs = 2600) {
+      const message = modes[name] || DEFAULT_CONFIG.commandModes[name] || name;
+      terminalController.showMessage(message, durationMs);
+    }
+
+    window.addEventListener("keydown", (event) => {
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      const key = event.key.toLowerCase();
+      if (!handledKeys.has(key)) return;
+
+      event.preventDefault();
+
+      if (key === "h" || key === "?") {
+        showMode("help", 3200);
+      } else if (key === "p") {
+        showMode("project");
+      } else if (key === "t") {
+        showMode("tools");
+      } else if (key === "m") {
+        showMode("matrix");
+        matrixController.boostRain(4200);
+      } else if (key === "g") {
+        showMode("github", 1800);
+        window.open(githubUrl, "_blank", "noopener,noreferrer");
+      }
+    });
   }
 
   async function main() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const config = await loadConfig();
     applyTextConfig(config);
-    startTerminal(config, reducedMotion);
-    startMatrix(config, reducedMotion);
+    const terminalController = startTerminal(config, reducedMotion);
+    const matrixController = startMatrix(config, reducedMotion);
+    setupCommandMode(config, terminalController, matrixController);
   }
 
   main();

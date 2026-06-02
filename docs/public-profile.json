@@ -1,0 +1,20 @@
+{
+  "name": "Vlad Voropaev",
+  "public_identity": "Vlad the Cyborg",
+  "github": "https://github.com/voropaevv",
+  "pages": "https://voropaevv.github.io/voropaevv/",
+  "focus": [
+    "AI systems",
+    "local-first tools",
+    "research workflows",
+    "automation",
+    "visual explanations"
+  ],
+  "current_projects": [
+    {
+      "name": "local-ai-chat-exporter",
+      "description": "A local-first tool for exporting AI chats into readable, portable archives.",
+      "url": "https://github.com/voropaevv/local-ai-chat-exporter"
+    }
+  ]
+}

@@ -18,38 +18,104 @@
     {"label": "GitHub profile", "url": "https://github.com/voropaevv"},
     {"label": "local-ai-chat-exporter", "url": "https://github.com/voropaevv/local-ai-chat-exporter"}
   ],
+  "readme": {
+    "mode": "compact",
+    "showLeadInsideHero": false,
+    "height": 360,
+    "promptMaxLength": 62
+  },
+  "pages": {
+    "mode": "interactive",
+    "showLeadInsidePanel": true,
+    "promptMaxLength": 96
+  },
+  "mobile": {
+    "fallStreamCount": 32,
+    "cursorSpawnPerFrame": 18,
+    "promptMaxLength": 48
+  },
+  "status": {
+    "mode": "public-profile",
+    "build": "local-ai-chat-exporter",
+    "state": "building public utility"
+  },
   "terminalPrompts": [
-    "design a local-first browser extension for exporting AI chats",
-    "turn local AI conversations into readable archives",
-    "structure exported chats for search, backup, and reuse",
-    "prototype the small tool before the system gets complicated",
-    "publish the useful version when it can stand alone"
+    "build local-ai-chat-exporter --target browser",
+    "export ai-chats --format markdown,json",
+    "index chat-archive --searchable --local-first",
+    "package useful-parts --public",
+    "prototype small-tool --before system-bloat",
+    "publish when-useful --not-before"
   ],
   "highlightWords": [
     "VLAD THE CYBORG",
-    "VOROPAEV",
-    "QUESTIONS",
-    "SYSTEMS",
     "AI AGENTS",
     "LOCAL FIRST",
-    "LOCAL AI",
-    "RESEARCH WORKFLOWS",
+    "CHAT EXPORTER",
+    "LOCAL CHAT",
+    "ARCHIVE",
+    "SEARCH",
+    "STRUCTURE",
     "AUTOMATION",
     "CODEX",
-    "DATA",
-    "DIAGRAMS",
-    "SCRIPTS",
-    "PROTOTYPES",
+    "PROTOTYPE",
+    "PUBLIC TOOL",
     "TOOLS",
-    "CODE",
-    "GITHUB",
-    "BROWSER EXTENSION",
-    "CHAT EXPORTER",
-    "LOCAL AI CHAT EXPORTER",
-    "CHAT ARCHIVE",
-    "VISUAL EXPLANATIONS",
-    "OPEN SOURCE"
+    "GITHUB"
   ],
+  "cursorDecodeTerms": [
+    "LOCAL FIRST",
+    "CHAT EXPORTER",
+    "TOOLS",
+    "CODEX",
+    "AUTOMATION",
+    "STRUCTURE"
+  ],
+  "commandModes": {
+    "help": "commands: help · project · tools · matrix · github",
+    "project": "local-ai-chat-exporter: export AI chats into readable local archives",
+    "tools": "focus: AI systems · local-first tools · research workflows · automation",
+    "matrix": "matrix intensity boosted",
+    "github": "opening github profile"
+  },
+  "publicProfile": {
+    "name": "Vlad Voropaev",
+    "public_identity": "Vlad the Cyborg",
+    "github": "https://github.com/voropaevv",
+    "pages": "https://voropaevv.github.io/voropaevv/",
+    "focus": [
+      "AI systems",
+      "local-first tools",
+      "research workflows",
+      "automation",
+      "visual explanations"
+    ],
+    "current_projects": [
+      {
+        "name": "local-ai-chat-exporter",
+        "description": "A local-first tool for exporting AI chats into readable, portable archives.",
+        "url": "https://github.com/voropaevv/local-ai-chat-exporter"
+      }
+    ]
+  },
+  "structuredData": {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Vlad Voropaev",
+    "alternateName": "Vlad the Cyborg",
+    "url": "https://github.com/voropaevv",
+    "sameAs": [
+      "https://github.com/voropaevv",
+      "https://voropaevv.github.io/voropaevv/"
+    ],
+    "knowsAbout": [
+      "AI systems",
+      "local-first tools",
+      "research workflows",
+      "automation",
+      "visual explanations"
+    ]
+  },
   "colors": {
     "background": "#000000",
     "green": "#00ff41",

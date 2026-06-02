@@ -27,7 +27,10 @@ class MatrixProfileContractTests(unittest.TestCase):
     def test_readme_uses_svg_profile_asset_and_pages_link(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("assets/matrix-profile.svg", readme)
+        self.assertIn("assets/open-live-version.svg", readme)
         self.assertIn("https://voropaevv.github.io/voropaevv/", readme)
+        self.assertIn("<details>", readme)
+        self.assertIn("Public index", readme)
         self.assertNotIn("Current build", readme)
         self.assertNotIn("Working interests", readme)
 
@@ -40,8 +43,11 @@ class MatrixProfileContractTests(unittest.TestCase):
         svg_path = ROOT / "assets" / "matrix-profile.svg"
         ElementTree.parse(svg_path)
         svg = svg_path.read_text(encoding="utf-8")
+        config = json.loads((ROOT / "matrix.config.json").read_text(encoding="utf-8"))
         self.assertIn("terminal://public-profile", svg)
         self.assertIn("animate", svg)
+        self.assertIn('height="360"', svg)
+        self.assertNotIn(config["identity"]["lead"], svg)
         self.assertNotIn("matrix-profile.gif", svg)
 
     def test_config_contains_requested_terms(self) -> None:
@@ -49,21 +55,36 @@ class MatrixProfileContractTests(unittest.TestCase):
         terms = set(config["highlightWords"])
         required = {
             "VLAD THE CYBORG",
-            "QUESTIONS",
-            "SYSTEMS",
             "AI AGENTS",
             "LOCAL FIRST",
+            "CHAT EXPORTER",
+            "LOCAL CHAT",
+            "ARCHIVE",
+            "SEARCH",
+            "STRUCTURE",
             "AUTOMATION",
             "CODEX",
-            "DATA",
-            "DIAGRAMS",
-            "SCRIPTS",
-            "PROTOTYPES",
+            "PROTOTYPE",
+            "PUBLIC TOOL",
             "TOOLS",
-            "CODE",
             "GITHUB",
         }
         self.assertTrue(required.issubset(terms))
+        self.assertEqual(config["readme"]["mode"], "compact")
+        self.assertFalse(config["readme"]["showLeadInsideHero"])
+        self.assertEqual(config["readme"]["height"], 360)
+        self.assertEqual(config["pages"]["mode"], "interactive")
+        self.assertIn("mobile", config)
+        self.assertIn("build local-ai-chat-exporter --target browser", config["terminalPrompts"])
+
+    def test_pages_has_machine_readable_profile_metadata(self) -> None:
+        index = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
+        self.assertIn('type="application/ld+json"', index)
+        self.assertIn("Vlad the Cyborg", index)
+        public_profile = json.loads((ROOT / "docs" / "public-profile.json").read_text(encoding="utf-8"))
+        self.assertEqual(public_profile["name"], "Vlad Voropaev")
+        self.assertEqual(public_profile["public_identity"], "Vlad the Cyborg")
+        self.assertIn("local-ai-chat-exporter", public_profile["current_projects"][0]["name"])
 
 
 if __name__ == "__main__":

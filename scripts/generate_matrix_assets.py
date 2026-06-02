@@ -18,7 +18,7 @@ DOCS_CONFIG_PATH = DOCS / "matrix.config.json"
 ASSETS.mkdir(exist_ok=True)
 DOCS.mkdir(exist_ok=True)
 
-W, H = 1200, 460
+W, H = 1200, 360
 CELL_W = 16
 CELL_H = 20
 COLS = W // CELL_W
@@ -74,6 +74,14 @@ def sync_docs_config() -> None:
         shutil.copyfile(CONFIG_PATH, DOCS_CONFIG_PATH)
 
 
+def write_public_profile_json(config: dict[str, Any]) -> None:
+    profile = config.get("publicProfile", {})
+    (DOCS / "public-profile.json").write_text(
+        json.dumps(profile, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
 def font_renders_distinct_glyphs(font: ImageFont.ImageFont, text: str) -> bool:
     masks = {bytes(font.getmask(glyph)) for glyph in text}
     return len(masks) == len(text)
@@ -126,8 +134,8 @@ def draw_text_with_glow(
 
 def create_streams(rng: random.Random, words: list[str]) -> list[dict[str, object]]:
     streams: list[dict[str, object]] = []
-    for col in rng.sample(range(COLS), min(COLS, 56)):
-        word = rng.choice(words).replace(" ", "·") if rng.random() < 0.82 else ""
+    for col in rng.sample(range(COLS), min(COLS, 42)):
+        word = rng.choice(words).replace(" ", "·") if rng.random() < 0.7 else ""
         streams.append(
             {
                 "col": col,
@@ -145,7 +153,7 @@ def draw_background(draw: ImageDraw.ImageDraw, rng: random.Random, words: list[s
     mono = get_font(16)
     streams = create_streams(random.Random(SEED), words)
 
-    for _ in range(360):
+    for _ in range(230):
         x = rng.randrange(0, W // CELL_W) * CELL_W
         y = rng.randrange(0, H // CELL_H) * CELL_H
         ch = rng.choice(GLYPHS)
@@ -181,9 +189,9 @@ def draw_panel(draw: ImageDraw.ImageDraw, image: Image.Image) -> Image.Image:
     panel = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     panel_draw = ImageDraw.Draw(panel)
     panel_draw.rounded_rectangle(
-        (92, 98, W - 92, H - 78),
+        (92, 74, W - 92, H - 46),
         radius=18,
-        fill=PANEL_FILL,
+        fill=(0, 12, 3, 224),
         outline=PANEL_OUTLINE,
         width=1,
     )
@@ -197,18 +205,18 @@ def draw_identity(draw: ImageDraw.ImageDraw, config: dict[str, Any]) -> None:
     command_font = get_font(20)
     title = config["identity"]["title"]
     subtitle = config["identity"]["subtitle"]
-    lead = config["identity"]["lead"]
-    prompt = config["terminalPrompts"][0]
+    readme_config = config.get("readme", {})
+    prompt_max = int(readme_config.get("promptMaxLength", 62))
+    prompt = config["terminalPrompts"][0][:prompt_max]
 
-    draw.text((132, 132), config["identity"].get("eyebrow", "terminal://public-profile"), font=small_font, fill=RED)
-    draw_text_with_glow(draw, (132, 164), title, title_font, WHITE_GREEN)
-    draw_text_with_glow(draw, (132, 224), subtitle, subtitle_font, GREEN)
-    draw.text((132, 264), lead, font=small_font, fill=MUTED_GREEN)
+    draw.text((132, 106), config["identity"].get("eyebrow", "terminal://public-profile"), font=small_font, fill=RED)
+    draw_text_with_glow(draw, (132, 140), title, title_font, WHITE_GREEN)
+    draw_text_with_glow(draw, (132, 202), subtitle, subtitle_font, GREEN)
 
-    draw.rounded_rectangle((132, 322, W - 132, 378), radius=6, fill=(0, 18, 4), outline=(0, 255, 65, 64), width=1)
-    draw.text((156, 340), "$", font=command_font, fill=GREEN)
-    draw.text((184, 340), prompt, font=command_font, fill=WHITE_GREEN)
-    draw.text((184 + min(820, len(prompt) * 12), 340), "▌", font=command_font, fill=GREEN)
+    draw.rounded_rectangle((132, 250, W - 132, 306), radius=6, fill=(0, 18, 4), outline=(0, 255, 65, 64), width=1)
+    draw.text((156, 268), "$", font=command_font, fill=GREEN)
+    draw.text((184, 268), prompt, font=command_font, fill=WHITE_GREEN)
+    draw.text((184 + min(820, len(prompt) * 12), 268), "▌", font=command_font, fill=GREEN)
 
 
 def write_preview_png(config: dict[str, Any]) -> None:
@@ -223,11 +231,12 @@ def write_preview_png(config: dict[str, Any]) -> None:
 
 
 def terminal_svg(config: dict[str, Any]) -> str:
-    prompts = [escape(prompt) for prompt in config["terminalPrompts"]]
+    prompt_max = int(config.get("readme", {}).get("promptMaxLength", 62))
+    prompts = [escape(prompt[:prompt_max]) for prompt in config["terminalPrompts"]]
     total = 5.2 * len(prompts)
     lines: list[str] = []
     prompt_x = 184
-    prompt_y = 356
+    prompt_y = 286
     max_width = 820
 
     for idx, prompt in enumerate(prompts):
@@ -248,7 +257,7 @@ def terminal_svg(config: dict[str, Any]) -> str:
         )
 
     lines.append(
-        f'''<text x="1000" y="{prompt_y}" class="cursor">▌<animate attributeName="opacity" dur="1.05s" repeatCount="indefinite" values="1;1;0;0;1" keyTimes="0;0.48;0.49;0.98;1" /></text>'''
+        f'''<text x="1020" y="{prompt_y}" class="cursor">▌<animate attributeName="opacity" dur="1.05s" repeatCount="indefinite" values="1;1;0;0;1" keyTimes="0;0.48;0.49;0.98;1" /></text>'''
     )
     return "\n".join(lines)
 
@@ -258,7 +267,7 @@ def write_svg(config: dict[str, Any]) -> None:
     words = config["highlightWords"]
     chunks: list[str] = []
 
-    for _ in range(650):
+    for _ in range(430):
         x = rng.randrange(0, W)
         y = rng.randrange(0, H)
         ch = rng.choice(GLYPHS)
@@ -266,7 +275,7 @@ def write_svg(config: dict[str, Any]) -> None:
         color = "#00ff41" if rng.random() > 0.16 else "#00451f"
         chunks.append(f'<text x="{x}" y="{y}" fill="{color}" opacity="{opacity:.2f}">{escape(ch)}</text>')
 
-    for i in range(42):
+    for i in range(32):
         x = rng.randrange(0, W)
         start_y = rng.randrange(-H, H)
         speed = rng.uniform(7.0, 14.5)
@@ -288,7 +297,6 @@ def write_svg(config: dict[str, Any]) -> None:
 
     title = escape(config["identity"]["title"])
     subtitle = escape(config["identity"]["subtitle"])
-    lead = escape(config["identity"]["lead"])
     eyebrow = escape(config["identity"].get("eyebrow", "terminal://public-profile"))
     terminal = terminal_svg(config)
 
@@ -297,7 +305,6 @@ def write_svg(config: dict[str, Any]) -> None:
         .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Noto Sans CJK JP', 'Noto Sans Mono CJK JP', monospace; }
         .title { font-size: 44px; font-weight: 800; fill: #eafff0; filter: url(#glow); }
         .subtitle { font-size: 20px; font-weight: 700; fill: #00ff41; }
-        .lead { font-size: 16px; fill: #a8ffbe; }
         .eyebrow { font-size: 14px; fill: #ff3030; font-weight: 700; }
         .command { font-size: 22px; fill: #eafff0; }
         .prompt { font-size: 22px; fill: #00ff41; font-weight: 700; }
@@ -324,14 +331,13 @@ def write_svg(config: dict[str, Any]) -> None:
   <rect width="100%" height="100%" fill="#000000" />
   <rect width="100%" height="100%" fill="url(#centerGlow)" />
   <g class="mono" font-size="16">{''.join(chunks)}</g>
-  <rect x="92" y="98" width="1016" height="284" rx="18" fill="#000c03" fill-opacity="0.82" stroke="#00ff41" stroke-opacity="0.36" stroke-width="1" />
+  <rect x="92" y="74" width="1016" height="240" rx="18" fill="#000c03" fill-opacity="0.88" stroke="#00ff41" stroke-opacity="0.36" stroke-width="1" />
   <g class="mono">
-    <text x="132" y="132" class="eyebrow">{eyebrow}</text>
-    <text x="132" y="184" class="title">{title}</text>
-    <text x="132" y="232" class="subtitle">{subtitle}</text>
-    <text x="132" y="272" class="lead">{lead}</text>
-    <rect x="132" y="318" width="936" height="56" rx="6" fill="#00ff41" fill-opacity="0.045" stroke="#00ff41" stroke-opacity="0.22" />
-    <text x="156" y="356" class="prompt">$</text>
+    <text x="132" y="106" class="eyebrow">{eyebrow}</text>
+    <text x="132" y="156" class="title">{title}</text>
+    <text x="132" y="214" class="subtitle">{subtitle}</text>
+    <rect x="132" y="248" width="936" height="56" rx="6" fill="#00ff41" fill-opacity="0.045" stroke="#00ff41" stroke-opacity="0.22" />
+    <text x="156" y="286" class="prompt">$</text>
     {terminal}
   </g>
 </svg>
@@ -339,11 +345,24 @@ def write_svg(config: dict[str, Any]) -> None:
     (ASSETS / "matrix-profile.svg").write_text(svg, encoding="utf-8")
 
 
+def write_open_live_svg(config: dict[str, Any]) -> None:
+    label = "open live matrix"
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="260" height="40" viewBox="0 0 260 40" role="img" aria-label="Open interactive Matrix version">
+  <rect width="260" height="40" rx="6" fill="#000c03" stroke="#00ff41" stroke-opacity="0.48" />
+  <text x="22" y="26" fill="#00ff41" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">$</text>
+  <text x="44" y="26" fill="#eafff0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">{escape(label)}</text>
+</svg>
+'''
+    (ASSETS / "open-live-version.svg").write_text(svg, encoding="utf-8")
+
+
 def main() -> None:
     config = load_config()
     sync_docs_config()
+    write_public_profile_json(config)
     write_svg(config)
     write_preview_png(config)
+    write_open_live_svg(config)
 
 
 if __name__ == "__main__":

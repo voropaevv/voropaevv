@@ -11,6 +11,26 @@
   <title>Vlad Voropaev · Vlad the Cyborg</title>
   <link rel="icon" href="data:," />
   <link rel="stylesheet" href="css/style.css" />
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Vlad Voropaev",
+      "alternateName": "Vlad the Cyborg",
+      "url": "https://github.com/voropaevv",
+      "sameAs": [
+        "https://github.com/voropaevv",
+        "https://voropaevv.github.io/voropaevv/"
+      ],
+      "knowsAbout": [
+        "AI systems",
+        "local-first tools",
+        "research workflows",
+        "automation",
+        "visual explanations"
+      ]
+    }
+  </script>
 </head>
 <body>
   <div id="bg-layer">
@@ -27,8 +47,13 @@
 
     <section class="terminal" aria-label="Animated terminal prompt">
       <span class="terminal-prefix">$</span>
-      <span id="typed-command">design a local-first browser extension for exporting AI chats</span><span class="terminal-cursor" aria-hidden="true">▌</span>
+      <span id="typed-command">build local-ai-chat-exporter --target browser</span><span class="terminal-cursor" aria-hidden="true">▌</span>
     </section>
+
+    <div class="terminal-meta" aria-label="Terminal interaction summary">
+      <span id="status-line">mode: public-profile · build: local-ai-chat-exporter</span>
+      <span class="command-hint">try: help · project · tools · matrix · github</span>
+    </div>
 
     <div class="chips" aria-label="Working areas" id="chips">
       <span>AI systems</span>
