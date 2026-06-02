@@ -25,7 +25,7 @@ It controls:
 - README compact mode and Pages interactive mode;
 - terminal prompts;
 - highlighted red Matrix words;
-- cursor decode terms and command-mode messages;
+- command-mode messages;
 - main colors;
 - animation parameters.
 
@@ -99,7 +99,7 @@ The README hero is compact and does not include the long lead sentence inside th
 try: help · project · tools · matrix · github
 ```
 
-Keyboard command mode supports `h`, `p`, `t`, `m`, and `g`. The `m` command briefly boosts Matrix density; cursor movement also injects short white-green decode terms.
+Keyboard command mode supports `h`, `p`, `t`, `m`, and `g`. The `m` command briefly boosts Matrix density. Cursor movement only spawns random glyphs in a Gaussian cloud; it does not inject words or phrases.
 
 ## Removed from README
 

@@ -63,14 +63,6 @@
     "TOOLS",
     "GITHUB"
   ],
-  "cursorDecodeTerms": [
-    "LOCAL FIRST",
-    "CHAT EXPORTER",
-    "TOOLS",
-    "CODEX",
-    "AUTOMATION",
-    "STRUCTURE"
-  ],
   "commandModes": {
     "help": "commands: help · project · tools · matrix · github",
     "project": "local-ai-chat-exporter: export AI chats into readable local archives",

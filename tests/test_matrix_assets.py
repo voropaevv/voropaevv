@@ -76,6 +76,14 @@ class MatrixProfileContractTests(unittest.TestCase):
         self.assertEqual(config["pages"]["mode"], "interactive")
         self.assertIn("mobile", config)
         self.assertIn("build local-ai-chat-exporter --target browser", config["terminalPrompts"])
+        self.assertNotIn("cursorDecodeTerms", config)
+
+    def test_cursor_reaction_stays_random_gaussian_cloud(self) -> None:
+        matrix_js = (ROOT / "docs" / "js" / "matrix.js").read_text(encoding="utf-8")
+        self.assertIn("Math.exp(-distSq / (2 * sigma * sigma))", matrix_js)
+        self.assertIn("randChoice(GLYPHS)", matrix_js)
+        self.assertNotIn("spawnDecodeWord", matrix_js)
+        self.assertNotIn("cursorDecodeTerms", matrix_js)
 
     def test_pages_has_machine_readable_profile_metadata(self) -> None:
         index = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")

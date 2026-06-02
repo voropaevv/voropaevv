@@ -46,9 +46,6 @@
       "LOCAL CHAT", "ARCHIVE", "SEARCH", "STRUCTURE", "AUTOMATION", "CODEX",
       "PROTOTYPE", "PUBLIC TOOL", "TOOLS", "GITHUB",
     ],
-    cursorDecodeTerms: [
-      "LOCAL FIRST", "CHAT EXPORTER", "TOOLS", "CODEX", "AUTOMATION", "STRUCTURE",
-    ],
     commandModes: {
       help: "commands: help · project · tools · matrix · github",
       project: "local-ai-chat-exporter: export AI chats into readable local archives",
@@ -141,7 +138,6 @@
     out.links = override.links || base.links;
     out.terminalPrompts = override.terminalPrompts || base.terminalPrompts;
     out.highlightWords = override.highlightWords || base.highlightWords;
-    out.cursorDecodeTerms = override.cursorDecodeTerms || base.cursorDecodeTerms;
     return out;
   }
 
@@ -284,9 +280,6 @@
     const animation = config.animation || DEFAULT_CONFIG.animation;
     const mobile = config.mobile || DEFAULT_CONFIG.mobile;
     const words = Array.isArray(config.highlightWords) ? config.highlightWords : DEFAULT_CONFIG.highlightWords;
-    const decodeTerms = Array.isArray(config.cursorDecodeTerms)
-      ? config.cursorDecodeTerms
-      : DEFAULT_CONFIG.cursorDecodeTerms;
     const wordProbability = Number(animation.wordProbability || DEFAULT_CONFIG.animation.wordProbability);
     let activeFallStreamCount = Number(animation.fallStreamCount || DEFAULT_CONFIG.animation.fallStreamCount);
     let activeCursorRadiusPx = Number(animation.cursorRadiusPx || DEFAULT_CONFIG.animation.cursorRadiusPx);
@@ -469,25 +462,9 @@
       }
     }
 
-    function spawnDecodeWord() {
-      if (!decodeTerms.length || Math.random() > 0.16) return;
-      const term = decodeTerms[Math.floor(Math.random() * decodeTerms.length)];
-      const word = String(term).replace(/\s+/g, "·");
-      if (!word) return;
-
-      const startCol = Math.floor(cursorX / fontSize) - Math.floor(word.length / 2);
-      const row = Math.floor(cursorY / rowHeight) + randInt(-1, 1);
-
-      for (let i = 0; i < word.length; i += 1) {
-        setCell(row, startCol + i, word[i], 0.95, SRC_CURSOR, colors.cursor);
-      }
-    }
-
     function updateCursor() {
       if (!CURSOR_CFG.ENABLED || !cursorActive) return;
       const sigma = Math.max(1, activeCursorRadiusPx * CURSOR_CFG.SIGMA_FRACTION);
-
-      spawnDecodeWord();
 
       for (let i = 0; i < activeCursorSpawnPerFrame; i += 1) {
         const angle = Math.random() * Math.PI * 2;
