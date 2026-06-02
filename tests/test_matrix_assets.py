@@ -85,6 +85,17 @@ class MatrixProfileContractTests(unittest.TestCase):
         self.assertNotIn("spawnDecodeWord", matrix_js)
         self.assertNotIn("cursorDecodeTerms", matrix_js)
 
+    def test_terminal_cursor_tracks_typed_text(self) -> None:
+        index = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
+        css = (ROOT / "docs" / "css" / "style.css").read_text(encoding="utf-8")
+        svg = (ROOT / "assets" / "matrix-profile.svg").read_text(encoding="utf-8")
+
+        self.assertIn('class="terminal-command-line"', index)
+        self.assertIn('grid-template-columns: auto minmax(0, 1fr);', css)
+        self.assertNotIn("grid-template-columns: auto minmax(0, 1fr) auto", css)
+        self.assertIn('attributeName="x"', svg)
+        self.assertNotIn('x="1020"', svg)
+
     def test_pages_has_machine_readable_profile_metadata(self) -> None:
         index = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
         self.assertIn('type="application/ld+json"', index)

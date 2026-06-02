@@ -93,6 +93,8 @@ publish when-useful --not-before
 
 In README, this is SVG animation. In Pages, it is JavaScript typing/erasing text.
 
+The terminal cursor is tied to the typed command, not to the right edge of the terminal box. In Pages, the cursor sits inline inside the command text group. In the README SVG, the generator animates the cursor `x` position with the prompt typing width.
+
 The README hero is compact and does not include the long lead sentence inside the SVG. The Pages panel keeps the lead and adds a status line plus command hint:
 
 ```text

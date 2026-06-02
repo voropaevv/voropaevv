@@ -92,7 +92,7 @@ h1 {
 
 .terminal {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: baseline;
   gap: 10px;
   min-height: 48px;
@@ -109,13 +109,18 @@ h1 {
   font-weight: 700;
 }
 
-#typed-command {
+.terminal-command-line {
   min-width: 0;
   color: var(--text);
   overflow-wrap: anywhere;
 }
 
+#typed-command {
+  color: var(--text);
+}
+
 .terminal-cursor {
+  display: inline-block;
   color: var(--green);
   animation: cursor-blink 1.05s steps(1) infinite;
 }
@@ -177,7 +182,7 @@ h1 {
   }
 
   .terminal {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr);
     gap: 8px;
   }
 

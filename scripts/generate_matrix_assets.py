@@ -232,14 +232,18 @@ def write_preview_png(config: dict[str, Any]) -> None:
 
 def terminal_svg(config: dict[str, Any]) -> str:
     prompt_max = int(config.get("readme", {}).get("promptMaxLength", 62))
-    prompts = [escape(prompt[:prompt_max]) for prompt in config["terminalPrompts"]]
-    total = 5.2 * len(prompts)
+    raw_prompts = [prompt[:prompt_max] for prompt in config["terminalPrompts"]]
+    total = 5.2 * len(raw_prompts)
     lines: list[str] = []
+    cursor_key_times: list[float] = []
+    cursor_x_values: list[float] = []
     prompt_x = 184
     prompt_y = 286
     max_width = 820
 
-    for idx, prompt in enumerate(prompts):
+    for idx, raw_prompt in enumerate(raw_prompts):
+        prompt = escape(raw_prompt)
+        prompt_width = min(max_width, max(8.0, len(raw_prompt) * 13.2))
         start = idx * 5.2 / total
         type_end = (idx * 5.2 + 1.55) / total
         hold_end = (idx * 5.2 + 3.78) / total
@@ -256,8 +260,23 @@ def terminal_svg(config: dict[str, Any]) -> str:
             f'''<text x="{prompt_x}" y="{prompt_y}" class="command" clip-path="url(#{clip_id})" opacity="0">{prompt}<animate attributeName="opacity" dur="{total:.1f}s" repeatCount="indefinite" values="{opacity_values}" keyTimes="{key_times}" /></text>'''
         )
 
+        for key_time, cursor_x in [
+            (start, float(prompt_x)),
+            (type_end, prompt_x + prompt_width),
+            (hold_end, prompt_x + prompt_width),
+            (erase_end, float(prompt_x)),
+            (end, float(prompt_x)),
+        ]:
+            if cursor_key_times and abs(cursor_key_times[-1] - key_time) < 0.00001:
+                cursor_x_values[-1] = cursor_x
+                continue
+            cursor_key_times.append(key_time)
+            cursor_x_values.append(cursor_x)
+
+    cursor_key_times_str = ";".join(f"{key_time:.5f}" for key_time in cursor_key_times)
+    cursor_x_values_str = ";".join(f"{cursor_x:.1f}" for cursor_x in cursor_x_values)
     lines.append(
-        f'''<text x="1020" y="{prompt_y}" class="cursor">▌<animate attributeName="opacity" dur="1.05s" repeatCount="indefinite" values="1;1;0;0;1" keyTimes="0;0.48;0.49;0.98;1" /></text>'''
+        f'''<text x="{prompt_x}" y="{prompt_y}" class="cursor">▌<animate attributeName="x" dur="{total:.1f}s" repeatCount="indefinite" values="{cursor_x_values_str}" keyTimes="{cursor_key_times_str}" /><animate attributeName="opacity" dur="1.05s" repeatCount="indefinite" values="1;1;0;0;1" keyTimes="0;0.48;0.49;0.98;1" /></text>'''
     )
     return "\n".join(lines)
 
