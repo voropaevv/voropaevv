@@ -1,20 +1,45 @@
 {
   "name": "Vlad Voropaev",
-  "public_identity": "Vlad the Cyborg",
+  "role": "Applied AI Engineer & Product Builder",
+  "location": "UAE",
   "github": "https://github.com/voropaevv",
+  "linkedin": "https://www.linkedin.com/in/thevladvoropaev/",
   "pages": "https://voropaevv.github.io/voropaevv/",
   "focus": [
-    "AI systems",
-    "local-first tools",
-    "research workflows",
-    "automation",
-    "visual explanations"
+    "Computer Vision",
+    "Multimodal AI",
+    "LLM agents and automation",
+    "Local-first product systems",
+    "Agent-directed engineering"
   ],
   "current_projects": [
     {
-      "name": "local-ai-chat-exporter",
-      "description": "A local-first tool for exporting AI chats into readable, portable archives.",
+      "name": "Jelluvi",
+      "repository": "local-ai-chat-exporter",
+      "status": "open-source active development",
+      "description": "A local-first browser extension for exporting AI conversations to nine portable formats without telemetry, accounts, or remote rendering.",
       "url": "https://github.com/voropaevv/local-ai-chat-exporter"
+    },
+    {
+      "name": "Word Solver CV",
+      "repository": "words_solver_cv",
+      "status": "documented portfolio system",
+      "description": "An end-to-end computer vision and OCR system that turns iPhone screenshots into ranked Russian word candidates.",
+      "url": "https://github.com/voropaevv/words_solver_cv",
+      "verified_facts": [
+        "5x5 board",
+        "123509-word dictionary",
+        "14-second documented end-to-end run"
+      ]
+    }
+  ],
+  "research": [
+    {
+      "title": "Automatic generation of neurocomics based on computer vision system data",
+      "venue": "IEEE ACDSA 2024",
+      "role": "first author",
+      "doi": "10.1109/ACDSA59508.2024.10467698",
+      "url": "https://doi.org/10.1109/ACDSA59508.2024.10467698"
     }
   ]
 }

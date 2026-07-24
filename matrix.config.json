@@ -1,22 +1,27 @@
 {
   "identity": {
-    "title": "Vlad Voropaev · Vlad the Cyborg",
-    "subtitle": "AI systems · local-first tools · research workflows · automation",
-    "lead": "I like understanding complicated things, building useful tools, and turning what I find into something other people can use.",
-    "eyebrow": "terminal://public-profile",
+    "title": "Vlad Voropaev",
+    "role": "Applied AI Engineer & Product Builder",
+    "subtitle": "Applied AI Engineer & Product Builder",
+    "lead": "I turn research, messy workflows, and model capabilities into working products—from computer vision pipelines to local-first AI tools.",
+    "eyebrow": "terminal://developer-profile",
     "profileUrl": "https://github.com/voropaevv",
     "pagesUrl": "https://voropaevv.github.io/voropaevv/",
-    "primaryProjectUrl": "https://github.com/voropaevv/local-ai-chat-exporter"
+    "linkedinUrl": "https://www.linkedin.com/in/thevladvoropaev/",
+    "primaryProjectUrl": "https://github.com/voropaevv/local-ai-chat-exporter",
+    "location": "UAE"
   },
   "tags": [
-    "AI systems",
-    "local-first tools",
-    "research workflows",
+    "Computer Vision",
+    "Multimodal AI",
+    "LLM agents",
+    "local-first products",
     "automation"
   ],
   "links": [
-    {"label": "GitHub profile", "url": "https://github.com/voropaevv"},
-    {"label": "local-ai-chat-exporter", "url": "https://github.com/voropaevv/local-ai-chat-exporter"}
+    {"label": "View GitHub", "url": "https://github.com/voropaevv"},
+    {"label": "Open LinkedIn", "url": "https://www.linkedin.com/in/thevladvoropaev/"},
+    {"label": "Read IEEE paper", "url": "https://doi.org/10.1109/ACDSA59508.2024.10467698"}
   ],
   "readme": {
     "mode": "compact",
@@ -35,78 +40,119 @@
     "promptMaxLength": 48
   },
   "status": {
-    "mode": "public-profile",
-    "build": "local-ai-chat-exporter",
-    "state": "building public utility"
+    "mode": "developer-profile",
+    "build": "useful AI products",
+    "state": "building in public"
   },
   "terminalPrompts": [
-    "build local-ai-chat-exporter --target browser",
-    "export ai-chats --format markdown,json",
-    "index chat-archive --searchable --local-first",
-    "package useful-parts --public",
-    "prototype small-tool --before system-bloat",
-    "publish when-useful --not-before"
+    "build useful-ai --from research --to product",
+    "trace pixels --through opencv --into decisions",
+    "export ai-chats --local-first --no-telemetry",
+    "orchestrate agents --with tests --with receipts",
+    "connect vision --language --generation",
+    "publish evidence --not promises"
   ],
   "highlightWords": [
-    "VLAD THE CYBORG",
+    "VLAD VOROPAEV",
+    "APPLIED AI",
+    "PRODUCT BUILDER",
+    "COMPUTER VISION",
+    "MULTIMODAL AI",
     "AI AGENTS",
     "LOCAL FIRST",
+    "JELLUVI",
+    "WORD SOLVER",
+    "NEUROCOMICS",
+    "OPENCV",
+    "TESSERACT",
     "CHAT EXPORTER",
-    "LOCAL CHAT",
-    "ARCHIVE",
-    "SEARCH",
-    "STRUCTURE",
+    "RESEARCH",
+    "EVIDENCE",
     "AUTOMATION",
     "CODEX",
     "PROTOTYPE",
-    "PUBLIC TOOL",
+    "OPEN SOURCE",
     "TOOLS",
     "GITHUB"
   ],
   "commandModes": {
-    "help": "commands: help · project · tools · matrix · github",
-    "project": "local-ai-chat-exporter: export AI chats into readable local archives",
-    "tools": "focus: AI systems · local-first tools · research workflows · automation",
+    "help": "commands: about · projects · research · stack · contact · matrix · clear",
+    "about": "Applied AI Engineer & Product Builder · Computer Vision → multimodal and agentic systems",
+    "projects": "selected work: Jelluvi · Word Solver CV · neurocomics research",
+    "research": "IEEE ACDSA 2024 · real-time vision → narrative → generated visuals",
+    "stack": "Python · TypeScript · OpenCV · Tesseract · browser extensions · Docker",
+    "contact": "github.com/voropaevv · linkedin.com/in/thevladvoropaev",
     "matrix": "matrix intensity boosted",
-    "github": "opening github profile"
+    "clear": "terminal cleared"
   },
   "publicProfile": {
     "name": "Vlad Voropaev",
-    "public_identity": "Vlad the Cyborg",
+    "role": "Applied AI Engineer & Product Builder",
+    "location": "UAE",
     "github": "https://github.com/voropaevv",
+    "linkedin": "https://www.linkedin.com/in/thevladvoropaev/",
     "pages": "https://voropaevv.github.io/voropaevv/",
     "focus": [
-      "AI systems",
-      "local-first tools",
-      "research workflows",
-      "automation",
-      "visual explanations"
+      "Computer Vision",
+      "Multimodal AI",
+      "LLM agents and automation",
+      "Local-first product systems",
+      "Agent-directed engineering"
     ],
     "current_projects": [
       {
-        "name": "local-ai-chat-exporter",
-        "description": "A local-first tool for exporting AI chats into readable, portable archives.",
+        "name": "Jelluvi",
+        "repository": "local-ai-chat-exporter",
+        "status": "open-source active development",
+        "description": "A local-first browser extension for exporting AI conversations to nine portable formats without telemetry, accounts, or remote rendering.",
         "url": "https://github.com/voropaevv/local-ai-chat-exporter"
+      },
+      {
+        "name": "Word Solver CV",
+        "repository": "words_solver_cv",
+        "status": "documented portfolio system",
+        "description": "An end-to-end computer vision and OCR system that turns iPhone screenshots into ranked Russian word candidates.",
+        "url": "https://github.com/voropaevv/words_solver_cv",
+        "verified_facts": [
+          "5x5 board",
+          "123509-word dictionary",
+          "14-second documented end-to-end run"
+        ]
+      }
+    ],
+    "research": [
+      {
+        "title": "Automatic generation of neurocomics based on computer vision system data",
+        "venue": "IEEE ACDSA 2024",
+        "role": "first author",
+        "doi": "10.1109/ACDSA59508.2024.10467698",
+        "url": "https://doi.org/10.1109/ACDSA59508.2024.10467698"
       }
     ]
   },
   "structuredData": {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": "https://voropaevv.github.io/voropaevv/#person",
     "name": "Vlad Voropaev",
-    "alternateName": "Vlad the Cyborg",
-    "url": "https://github.com/voropaevv",
+    "jobTitle": "Applied AI Engineer & Product Builder",
+    "url": "https://voropaevv.github.io/voropaevv/",
     "sameAs": [
       "https://github.com/voropaevv",
-      "https://voropaevv.github.io/voropaevv/"
+      "https://www.linkedin.com/in/thevladvoropaev/"
     ],
     "knowsAbout": [
-      "AI systems",
-      "local-first tools",
-      "research workflows",
-      "automation",
-      "visual explanations"
-    ]
+      "Computer Vision",
+      "Multimodal AI",
+      "LLM agents",
+      "Automation",
+      "Local-first software",
+      "Product engineering"
+    ],
+    "homeLocation": {
+      "@type": "Country",
+      "name": "United Arab Emirates"
+    }
   },
   "colors": {
     "background": "#000000",
