@@ -365,9 +365,9 @@ def write_svg(config: dict[str, Any]) -> None:
 
 
 def write_open_live_svg(config: dict[str, Any]) -> None:
-    label = "open live matrix"
-    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="260" height="40" viewBox="0 0 260 40" role="img" aria-label="Open interactive Matrix version">
-  <rect width="260" height="40" rx="6" fill="#000c03" stroke="#00ff41" stroke-opacity="0.48" />
+    label = "open developer matrix"
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="286" height="40" viewBox="0 0 286 40" role="img" aria-label="Open interactive Matrix developer profile">
+  <rect width="286" height="40" rx="6" fill="#000c03" stroke="#00ff41" stroke-opacity="0.48" />
   <text x="22" y="26" fill="#00ff41" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">$</text>
   <text x="44" y="26" fill="#eafff0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15">{escape(label)}</text>
 </svg>

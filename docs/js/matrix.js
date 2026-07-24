@@ -3,14 +3,16 @@
 
   const DEFAULT_CONFIG = {
     identity: {
-      title: "Vlad Voropaev · Vlad the Cyborg",
-      lead: "I like understanding complicated things, building useful tools, and turning what I find into something other people can use.",
-      eyebrow: "terminal://public-profile",
+      title: "Vlad Voropaev",
+      role: "Applied AI Engineer & Product Builder",
+      lead: "I turn research, messy workflows, and model capabilities into working products—from computer vision pipelines to local-first AI tools.",
+      eyebrow: "terminal://developer-profile",
     },
-    tags: ["AI systems", "local-first tools", "research workflows", "automation"],
+    tags: ["Computer Vision", "Multimodal AI", "LLM agents", "local-first products", "automation"],
     links: [
-      { label: "GitHub profile", url: "https://github.com/voropaevv" },
-      { label: "local-ai-chat-exporter", url: "https://github.com/voropaevv/local-ai-chat-exporter" },
+      { label: "View GitHub", url: "https://github.com/voropaevv" },
+      { label: "Open LinkedIn", url: "https://www.linkedin.com/in/thevladvoropaev/" },
+      { label: "Read IEEE paper", url: "https://doi.org/10.1109/ACDSA59508.2024.10467698" },
     ],
     readme: {
       mode: "compact",
@@ -29,29 +31,34 @@
       promptMaxLength: 48,
     },
     status: {
-      mode: "public-profile",
-      build: "local-ai-chat-exporter",
-      state: "building public utility",
+      mode: "developer-profile",
+      build: "useful AI products",
+      state: "building in public",
     },
     terminalPrompts: [
-      "build local-ai-chat-exporter --target browser",
-      "export ai-chats --format markdown,json",
-      "index chat-archive --searchable --local-first",
-      "package useful-parts --public",
-      "prototype small-tool --before system-bloat",
-      "publish when-useful --not-before",
+      "build useful-ai --from research --to product",
+      "trace pixels --through opencv --into decisions",
+      "export ai-chats --local-first --no-telemetry",
+      "orchestrate agents --with tests --with receipts",
+      "connect vision --language --generation",
+      "publish evidence --not promises",
     ],
     highlightWords: [
-      "VLAD THE CYBORG", "LOCAL FIRST", "AI AGENTS", "CHAT EXPORTER",
-      "LOCAL CHAT", "ARCHIVE", "SEARCH", "STRUCTURE", "AUTOMATION", "CODEX",
-      "PROTOTYPE", "PUBLIC TOOL", "TOOLS", "GITHUB",
+      "VLAD VOROPAEV", "APPLIED AI", "PRODUCT BUILDER",
+      "COMPUTER VISION", "MULTIMODAL AI", "AI AGENTS", "LOCAL FIRST",
+      "JELLUVI", "WORD SOLVER", "NEUROCOMICS", "OPENCV", "TESSERACT",
+      "CHAT EXPORTER", "RESEARCH", "EVIDENCE", "AUTOMATION", "CODEX",
+      "PROTOTYPE", "OPEN SOURCE", "TOOLS", "GITHUB",
     ],
     commandModes: {
-      help: "commands: help · project · tools · matrix · github",
-      project: "local-ai-chat-exporter: export AI chats into readable local archives",
-      tools: "focus: AI systems · local-first tools · research workflows · automation",
+      help: "commands: about · projects · research · stack · contact · matrix · clear",
+      about: "Applied AI Engineer & Product Builder · Computer Vision → multimodal and agentic systems",
+      projects: "selected work: Jelluvi · Word Solver CV · neurocomics research",
+      research: "IEEE ACDSA 2024 · real-time vision → narrative → generated visuals",
+      stack: "Python · TypeScript · OpenCV · Tesseract · browser extensions · Docker",
+      contact: "github.com/voropaevv · linkedin.com/in/thevladvoropaev",
       matrix: "matrix intensity boosted",
-      github: "opening github profile",
+      clear: "terminal cleared",
     },
     colors: {
       background: "#000000",
@@ -162,6 +169,7 @@
 
   function applyTextConfig(config) {
     const titleEl = document.querySelector('[data-config="title"]');
+    const roleEl = document.querySelector('[data-config="role"]');
     const leadEl = document.querySelector('[data-config="lead"]');
     const eyebrowEl = document.querySelector('[data-config="eyebrow"]');
     const chipsEl = document.getElementById("chips");
@@ -169,6 +177,7 @@
     const statusEl = document.getElementById("status-line");
 
     if (titleEl && config.identity.title) titleEl.textContent = config.identity.title;
+    if (roleEl && config.identity.role) roleEl.textContent = config.identity.role;
     if (leadEl && config.identity.lead) leadEl.textContent = config.identity.lead;
     if (eyebrowEl && config.identity.eyebrow) eyebrowEl.textContent = config.identity.eyebrow;
     if (statusEl && config.status) {
@@ -581,34 +590,95 @@
 
   function setupCommandMode(config, terminalController, matrixController) {
     const modes = config.commandModes || DEFAULT_CONFIG.commandModes;
-    const githubUrl = config.identity?.profileUrl || "https://github.com/voropaevv";
-    const handledKeys = new Set(["h", "?", "p", "t", "m", "g"]);
+    const form = document.getElementById("terminal-form");
+    const input = document.getElementById("terminal-input");
+    const output = document.getElementById("terminal-output");
+    const commandAliases = {
+      "?": "help",
+      h: "help",
+      p: "projects",
+      project: "projects",
+      r: "research",
+      s: "stack",
+      tools: "stack",
+      c: "contact",
+      m: "matrix",
+    };
+    const sectionTargets = {
+      about: "top",
+      projects: "work",
+      research: "research",
+      stack: "stack",
+      contact: "contact",
+    };
+    const handledKeys = new Set(["h", "?", "p", "r", "s", "c", "m"]);
 
-    function showMode(name, durationMs = 2600) {
+    function setOutput(message) {
+      if (output) output.textContent = message;
+    }
+
+    function showMode(name, durationMs = 3200) {
       const message = modes[name] || DEFAULT_CONFIG.commandModes[name] || name;
       terminalController.showMessage(message, durationMs);
+      setOutput(message);
+    }
+
+    function scrollToSection(command) {
+      const sectionId = sectionTargets[command];
+      const target = sectionId ? document.getElementById(sectionId) : null;
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (target) {
+        target.scrollIntoView({
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+          block: "start",
+        });
+      }
+    }
+
+    function executeCommand(rawCommand) {
+      const entered = String(rawCommand || "").trim().toLowerCase();
+      const command = commandAliases[entered] || entered;
+
+      if (!command) return;
+
+      if (command === "clear") {
+        terminalController.showMessage(modes.clear || DEFAULT_CONFIG.commandModes.clear, 1200);
+        setOutput("");
+        return;
+      }
+
+      if (command === "matrix") {
+        showMode("matrix");
+        matrixController.boostRain(4200);
+        return;
+      }
+
+      if (command === "help" || sectionTargets[command]) {
+        showMode(command);
+        scrollToSection(command);
+        return;
+      }
+
+      setOutput(`command not found: ${entered} · try help`);
+      terminalController.showMessage(`command not found: ${entered}`, 2200);
+    }
+
+    if (form && input) {
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        executeCommand(input.value);
+        input.value = "";
+      });
     }
 
     window.addEventListener("keydown", (event) => {
       if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
       const key = event.key.toLowerCase();
       if (!handledKeys.has(key)) return;
 
       event.preventDefault();
-
-      if (key === "h" || key === "?") {
-        showMode("help", 3200);
-      } else if (key === "p") {
-        showMode("project");
-      } else if (key === "t") {
-        showMode("tools");
-      } else if (key === "m") {
-        showMode("matrix");
-        matrixController.boostRain(4200);
-      } else if (key === "g") {
-        showMode("github", 1800);
-        window.open(githubUrl, "_blank", "noopener,noreferrer");
-      }
+      executeCommand(key);
     });
   }
 

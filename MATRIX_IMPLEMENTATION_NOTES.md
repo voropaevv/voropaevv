@@ -1,136 +1,94 @@
-# Matrix implementation notes
+# Matrix developer profile implementation
 
-## Final structure
+## Purpose
 
-The profile uses two layers:
+This repository has two public surfaces:
 
-1. `README.md` — GitHub-safe visual profile using `assets/matrix-profile.svg`.
-2. `docs/` — real cursor-reactive Matrix page published with GitHub Pages.
+1. `README.md` — the GitHub profile README
+2. `docs/` — the interactive developer portfolio published with GitHub Pages
 
-The README does not attempt to run JavaScript. The interactive canvas lives only in GitHub Pages.
+Both surfaces represent Vlad Voropaev as an Applied AI Engineer and Product Builder. The GitHub Pages site is intentionally developer-focused; a future broader personal website is a separate project and hosting decision.
+
+## Visual direction
+
+The existing Matrix language remains the design system:
+
+- black background
+- green digital rain
+- sparse red signal words
+- monospace typography
+- terminal controls
+- thin green borders and restrained glow
+
+The live page extends the original single-card composition into a responsive portfolio without changing that visual identity.
+
+## Public content hierarchy
+
+1. Vlad Voropaev
+2. Applied AI Engineer & Product Builder
+3. Computer Vision as the deepest verified technical foundation
+4. Multimodal AI, LLM agents, automation, and local-first product systems
+5. Evidence through Jelluvi, Word Solver CV, and the IEEE neurocomics paper
+6. Historical public work clearly labeled as archive material
+
+Current product status is stated precisely. Jelluvi is open source and in active development; the profile does not claim a public store release, customer adoption, or user counts.
 
 ## Shared configuration
 
-The source of truth is:
+The source of truth for generated Matrix assets and machine-readable public profile data is:
 
 ```text
 matrix.config.json
 ```
 
-It controls:
-
-- identity text;
-- tags;
-- links;
-- README compact mode and Pages interactive mode;
-- terminal prompts;
-- highlighted red Matrix words;
-- command-mode messages;
-- main colors;
-- animation parameters.
-
-The generator copies this config to:
+The generator copies it to:
 
 ```text
 docs/matrix.config.json
 ```
 
-The Pages JavaScript loads that copy at runtime.
-
-## User-facing positioning
-
-Final identity:
-
-```text
-Vlad Voropaev · Vlad the Cyborg
-```
-
-Profile sentence:
-
-```text
-I like understanding complicated things, building useful tools, and turning what I find into something other people can use.
-```
-
-Top tags:
-
-```text
-AI systems · local-first tools · research workflows · automation
-```
-
-## Matrix terms
-
-The highlighted red terms are intentionally sparse and tuned around Vlad's current public GitHub direction:
-
-- `VLAD THE CYBORG`
-- `AI AGENTS`
-- `LOCAL FIRST`
-- `CHAT EXPORTER`
-- `LOCAL CHAT`
-- `ARCHIVE`
-- `SEARCH`
-- `STRUCTURE`
-- `AUTOMATION`
-- `CODEX`
-- `PROTOTYPE`
-- `PUBLIC TOOL`
-- `TOOLS`
-- `GITHUB`
-
-## Terminal prompt behavior
-
-The rectangle inside the SVG and Pages panel is now terminal-like.
-
-It rotates through prompts about the first public project:
-
-```text
-build local-ai-chat-exporter --target browser
-export ai-chats --format markdown,json
-index chat-archive --searchable --local-first
-package useful-parts --public
-prototype small-tool --before system-bloat
-publish when-useful --not-before
-```
-
-In README, this is SVG animation. In Pages, it is JavaScript typing/erasing text.
-
-The terminal cursor is tied to the typed command, not to the right edge of the terminal box. In Pages, the cursor sits inline inside the command text group. In the README SVG, the generator animates the cursor `x` position with the prompt typing width.
-
-The README hero is compact and does not include the long lead sentence inside the SVG. The Pages panel keeps the lead and adds a status line plus command hint:
-
-```text
-try: help · project · tools · matrix · github
-```
-
-Keyboard command mode supports `h`, `p`, `t`, `m`, and `g`. The `m` command briefly boosts Matrix density. Cursor movement only spawns random glyphs in a Gaussian cloud; it does not inject words or phrases.
-
-## Removed from README
-
-The final README intentionally removes:
-
-- `Current build` block;
-- `What I usually build` block;
-- `Working interests` table;
-- UAE footer;
-- prompt list lines like `take a strange question apart`.
-
-## Regeneration
-
-Run:
-
-```bash
-python scripts/generate_matrix_assets.py
-python -m unittest tests/test_matrix_assets.py
-node --check docs/js/matrix.js
-```
-
-Generated/updated files:
+It also derives:
 
 ```text
 assets/matrix-profile.svg
 assets/matrix-preview.png
 assets/open-live-version.svg
-docs/matrix.config.json
 docs/public-profile.json
 ```
 
-The GitHub Actions workflow regenerates assets when `matrix.config.json` or the generator changes.
+## Interactive terminal
+
+The GitHub Pages terminal supports:
+
+```text
+help
+about
+projects
+research
+stack
+contact
+matrix
+clear
+```
+
+The command form is keyboard-accessible and reports results through an `aria-live` region. Section commands scroll to the corresponding portfolio content. The Matrix command temporarily increases the rain density.
+
+## Performance and accessibility
+
+- Matrix rendering pauses while the page is hidden
+- mobile density is lower than desktop density
+- `prefers-reduced-motion` switches to a static Matrix frame
+- semantic landmarks, heading order, skip navigation, visible focus states, and form labels are present
+- the background canvas is decorative and hidden from accessibility APIs
+
+## Regeneration and verification
+
+Run:
+
+```bash
+python3 scripts/generate_matrix_assets.py
+python3 -m unittest tests/test_matrix_assets.py
+node --check docs/js/matrix.js
+```
+
+Then verify the live page in a browser at desktop and mobile widths, test the terminal commands, inspect browser console errors, and confirm that `docs/matrix.config.json` exactly matches `matrix.config.json`.
