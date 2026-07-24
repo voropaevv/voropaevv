@@ -251,7 +251,10 @@ def terminal_svg(config: dict[str, Any]) -> str:
         end = min(1.0, (idx * 5.2 + 5.2) / total)
         key_times = f"0;{start:.5f};{type_end:.5f};{hold_end:.5f};{erase_end:.5f};{end:.5f};1"
         opacity_values = "0;0;1;1;1;0;0"
-        width_values = f"0;0;{max_width};{max_width};0;0;0"
+        # The text reveal and cursor must travel over the same distance.
+        # Using the full terminal width here lets glyphs appear ahead of the
+        # cursor whenever the command is shorter than the terminal.
+        width_values = f"0;0;{prompt_width:.1f};{prompt_width:.1f};0;0;0"
         clip_id = f"terminal-clip-{idx}"
         lines.append(
             f'''<clipPath id="{clip_id}"><rect x="{prompt_x}" y="{prompt_y - 26}" width="0" height="38"><animate attributeName="width" dur="{total:.1f}s" repeatCount="indefinite" values="{width_values}" keyTimes="{key_times}" /></rect></clipPath>'''
