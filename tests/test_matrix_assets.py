@@ -55,7 +55,7 @@ class MatrixProfileContractTests(unittest.TestCase):
 
     def test_svg_is_well_formed_and_has_terminal_animation(self) -> None:
         svg_path = ROOT / "assets" / "matrix-profile.svg"
-        ElementTree.parse(svg_path)
+        svg_tree = ElementTree.parse(svg_path)
         svg = svg_path.read_text(encoding="utf-8")
         config = json.loads((ROOT / "matrix.config.json").read_text(encoding="utf-8"))
         self.assertIn("terminal://developer-profile", svg)
@@ -64,6 +64,47 @@ class MatrixProfileContractTests(unittest.TestCase):
         self.assertIn('height="360"', svg)
         self.assertNotIn(config["identity"]["lead"], svg)
         self.assertNotIn("matrix-profile.gif", svg)
+
+        namespace = {"svg": "http://www.w3.org/2000/svg"}
+        clip_widths = []
+        for clip in svg_tree.findall(".//svg:clipPath", namespace):
+            width_animation = clip.find(
+                'svg:rect/svg:animate[@attributeName="width"]',
+                namespace,
+            )
+            self.assertIsNotNone(width_animation)
+            width_values = [
+                float(value)
+                for value in width_animation.attrib["values"].split(";")
+            ]
+            clip_widths.append(width_values[2])
+
+        cursor = svg_tree.find('.//svg:text[@class="cursor"]', namespace)
+        self.assertIsNotNone(cursor)
+        cursor_animation = cursor.find(
+            'svg:animate[@attributeName="x"]',
+            namespace,
+        )
+        self.assertIsNotNone(cursor_animation)
+        cursor_x_values = [
+            float(value)
+            for value in cursor_animation.attrib["values"].split(";")
+        ]
+
+        prompts = [
+            prompt[: config["readme"]["promptMaxLength"]]
+            for prompt in config["terminalPrompts"]
+        ]
+        expected_widths = [
+            float(f"{min(820.0, max(8.0, len(prompt) * 13.2)):.1f}")
+            for prompt in prompts
+        ]
+        self.assertEqual(clip_widths, expected_widths)
+        for index, clip_width in enumerate(clip_widths):
+            cursor_at_type_end = cursor_x_values[1 + index * 4]
+            cursor_during_hold = cursor_x_values[2 + index * 4]
+            self.assertAlmostEqual(cursor_at_type_end - 184.0, clip_width)
+            self.assertAlmostEqual(cursor_during_hold - 184.0, clip_width)
 
     def test_config_contains_current_positioning_and_public_evidence(self) -> None:
         config = json.loads((ROOT / "matrix.config.json").read_text(encoding="utf-8"))
