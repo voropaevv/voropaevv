@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import random
 import shutil
 import textwrap
@@ -383,7 +384,8 @@ def main() -> None:
     sync_docs_config()
     write_public_profile_json(config)
     write_svg(config)
-    write_preview_png(config)
+    if os.environ.get("MATRIX_SKIP_RASTER_PREVIEW") != "1":
+        write_preview_png(config)
     write_open_live_svg(config)
 
 

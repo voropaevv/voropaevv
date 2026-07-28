@@ -95,3 +95,5 @@ node --check docs/js/matrix.js
 ```
 
 Then verify the live page in a browser at desktop and mobile widths, test the terminal commands, inspect browser console errors, and confirm that `docs/matrix.config.json` exactly matches `matrix.config.json`.
+
+CI regenerates the deterministic vector and JSON outputs without downloading a platform CJK font. The committed raster preview is generated and visually checked on a workstation with a Japanese-capable font.

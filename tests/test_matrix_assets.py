@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import unittest
 from pathlib import Path
 from xml.etree import ElementTree
@@ -12,6 +13,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class MatrixAssetFontTests(unittest.TestCase):
     def test_matrix_font_renders_japanese_glyphs_as_distinct_shapes(self) -> None:
+        if os.environ.get("MATRIX_SKIP_RASTER_FONT_TEST") == "1":
+            self.skipTest("CI validates vector assets without installing a platform CJK raster font")
+
         font = get_font(16)
         sample_glyphs = "アあヴ"
         masks = {bytes(font.getmask(glyph)) for glyph in sample_glyphs}
