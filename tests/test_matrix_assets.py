@@ -24,18 +24,22 @@ class MatrixAssetFontTests(unittest.TestCase):
 
 
 class MatrixProfileContractTests(unittest.TestCase):
-    def test_readme_leads_with_verified_developer_work(self) -> None:
+    def test_readme_leads_with_industrial_computer_vision(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         required = {
             "assets/matrix-profile.svg",
             "assets/open-live-version.svg",
             "https://voropaevv.github.io/voropaevv/",
-            "Applied AI Engineer &amp; Product Builder",
+            "Computer Vision Engineer",
+            "Industrial Computer Vision",
+            "Crane operator safety vision system",
+            "17,696 CCTV frames",
             "Jelluvi",
             "Word Solver CV",
-            "123,509",
             "10.1109/ACDSA59508.2024.10467698",
             "https://www.linkedin.com/in/thevladvoropaev/",
+            "mailto:thevladvoropaev@gmail.com",
+            "Vlad_Voropaev_Computer_Vision_Engineer_Resume.pdf",
         }
         for item in required:
             self.assertIn(item, readme)
@@ -44,6 +48,8 @@ class MatrixProfileContractTests(unittest.TestCase):
             "thousands of users",
             "released on the Chrome Web Store",
             "production customers",
+            "44 comics",
+            "22+22",
         }
         for claim in unsupported_claims:
             self.assertNotIn(claim, readme.lower())
@@ -59,7 +65,7 @@ class MatrixProfileContractTests(unittest.TestCase):
         svg = svg_path.read_text(encoding="utf-8")
         config = json.loads((ROOT / "matrix.config.json").read_text(encoding="utf-8"))
         self.assertIn("terminal://developer-profile", svg)
-        self.assertIn("Applied AI Engineer &amp; Product Builder", svg)
+        self.assertIn("Computer Vision Engineer", svg)
         self.assertIn("animate", svg)
         self.assertIn('height="360"', svg)
         self.assertNotIn(config["identity"]["lead"], svg)
@@ -111,36 +117,40 @@ class MatrixProfileContractTests(unittest.TestCase):
         terms = set(config["highlightWords"])
         required_terms = {
             "VLAD VOROPAEV",
-            "APPLIED AI",
-            "PRODUCT BUILDER",
             "COMPUTER VISION",
-            "MULTIMODAL AI",
-            "AI AGENTS",
-            "LOCAL FIRST",
-            "JELLUVI",
-            "WORD SOLVER",
-            "NEUROCOMICS",
+            "VIDEO ANALYTICS",
+            "MULTI CAMERA",
+            "OBJECT DETECTION",
+            "OBJECT TRACKING",
+            "POSE ESTIMATION",
+            "PPE",
+            "RTSP",
+            "NEUROQUEST",
             "EVIDENCE",
         }
         self.assertTrue(required_terms.issubset(terms))
-        self.assertEqual(config["identity"]["role"], "Applied AI Engineer & Product Builder")
+        self.assertEqual(config["identity"]["role"], "Computer Vision Engineer")
+        self.assertEqual(config["identity"]["email"], "thevladvoropaev@gmail.com")
         self.assertEqual(config["identity"]["location"], "UAE")
         self.assertEqual(config["readme"]["mode"], "compact")
         self.assertFalse(config["readme"]["showLeadInsideHero"])
         self.assertEqual(config["readme"]["height"], 360)
         self.assertEqual(config["pages"]["mode"], "interactive")
-        self.assertIn("build useful-ai --from research --to product", config["terminalPrompts"])
+        self.assertIn("analyze rtsp --detect --track --reason", config["terminalPrompts"])
         self.assertNotIn("cursorDecodeTerms", config)
 
     def test_public_profile_is_public_safe_and_evidence_backed(self) -> None:
         profile = json.loads((ROOT / "docs" / "public-profile.json").read_text(encoding="utf-8"))
         self.assertEqual(profile["name"], "Vlad Voropaev")
-        self.assertEqual(profile["role"], "Applied AI Engineer & Product Builder")
+        self.assertEqual(profile["role"], "Computer Vision Engineer")
         self.assertEqual(profile["location"], "UAE")
+        self.assertEqual(profile["email"], "thevladvoropaev@gmail.com")
         self.assertEqual(
-            [project["name"] for project in profile["current_projects"]],
-            ["Jelluvi", "Word Solver CV"],
+            [project["name"] for project in profile["industrial_experience"]],
+            ["Crane operator safety vision system", "Industrial safety video analytics"],
         )
+        self.assertEqual([project["name"] for project in profile["open_source"]], ["Jelluvi"])
+        self.assertEqual([project["name"] for project in profile["educational_archive"]], ["Word Solver CV"])
         self.assertEqual(
             profile["research"][0]["doi"],
             "10.1109/ACDSA59508.2024.10467698",
@@ -178,7 +188,10 @@ class MatrixProfileContractTests(unittest.TestCase):
             'rel="canonical"',
             'property="og:title"',
             'name="twitter:card"',
-            "Applied AI Engineer &amp; Product Builder",
+            "Computer Vision Engineer",
+            "Industrial Video",
+            "thevladvoropaev@gmail.com",
+            "Vlad_Voropaev_Computer_Vision_Engineer_Resume.pdf",
             "https://www.linkedin.com/in/thevladvoropaev/",
             "https://doi.org/10.1109/ACDSA59508.2024.10467698",
             'id="work"',
@@ -191,6 +204,38 @@ class MatrixProfileContractTests(unittest.TestCase):
 
         self.assertNotIn('"alternateName"', index)
         self.assertNotIn('data-config="alias"', index)
+
+    def test_mobile_navigation_keeps_every_primary_destination_visible(self) -> None:
+        css = (ROOT / "docs" / "css" / "style.css").read_text(encoding="utf-8")
+        self.assertNotIn(".site-nav a:nth-child", css)
+
+    def test_public_copy_keeps_professional_and_educational_work_separate(self) -> None:
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        industrial_index = readme.index("## Industrial Computer Vision")
+        research_index = readme.index("## Research to System")
+        open_source_index = readme.index("## Open-Source Engineering")
+        educational_index = readme.index("<summary>Educational and historical public archive</summary>")
+        self.assertLess(industrial_index, research_index)
+        self.assertLess(research_index, open_source_index)
+        self.assertLess(open_source_index, educational_index)
+
+        public_text = "\n".join(
+            [
+                readme,
+                (ROOT / "docs" / "index.html").read_text(encoding="utf-8"),
+                (ROOT / "matrix.config.json").read_text(encoding="utf-8"),
+            ]
+        ).lower()
+        for forbidden in (
+            "44 comics",
+            "22+22",
+            "verified personal contribution",
+            "evidence boundary",
+            "raw_private",
+            "/users/msm4m-vv",
+            "/volumes/vlados",
+        ):
+            self.assertNotIn(forbidden, public_text)
 
 
 if __name__ == "__main__":

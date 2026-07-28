@@ -8,19 +8,19 @@ Keep the GitHub profile and GitHub Pages site aligned around one public professi
 
 ```text
 Vlad Voropaev
-Applied AI Engineer & Product Builder
+Computer Vision Engineer
 ```
 
 The GitHub Pages surface is a developer portfolio in the existing Matrix style. A future general personal website is separate and must not be folded into this repository without a new explicit decision.
 
 ## Content rules
 
-- Lead with working systems and inspectable evidence
-- Treat Computer Vision as the deepest verified technical foundation
-- Show multimodal AI, LLM agents, automation, and product engineering as connected expansion areas
+- Lead with industrial Computer Vision systems and measured outcomes
+- Keep multi-camera video analytics, detection, tracking, pose, PPE, zones, and OCR in the first professional layer
+- Show applied AI and product engineering as connected expansion areas after Computer Vision
 - Keep Jelluvi status precise: open source and in active development
 - Do not claim an extension-store release, customers, user counts, or adoption without current evidence
-- Present Word Solver CV as a documented portfolio system and preserve its verified facts
+- Keep Word Solver CV inside the educational and historical archive
 - Link the IEEE paper through DOI `10.1109/ACDSA59508.2024.10467698`
 - Label older repositories as historical public archive material
 - Keep public location at UAE country level

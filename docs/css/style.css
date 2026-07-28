@@ -12,7 +12,7 @@
   --red-soft: rgba(255, 65, 65, 0.13);
   --text: #eafff0;
   --muted: rgba(234, 255, 240, 0.74);
-  --dim: rgba(234, 255, 240, 0.48);
+  --dim: rgba(234, 255, 240, 0.64);
   --page-width: 1180px;
   --radius: 2px;
 }
@@ -151,17 +151,22 @@ canvas {
 
 .site-nav a {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   letter-spacing: 0.06em;
   text-decoration: none;
   text-transform: uppercase;
 }
 
 .site-nav a:hover,
+.site-nav a:focus-visible {
+  color: var(--green);
+}
+
 .site-nav a:focus-visible,
 .brand:focus-visible {
-  color: var(--green);
-  outline: none;
+  border-radius: 2px;
+  outline: 2px solid var(--green);
+  outline-offset: 4px;
 }
 
 .panel {
@@ -188,7 +193,7 @@ canvas {
 .eyebrow {
   margin: 0 0 16px;
   color: var(--red);
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -248,7 +253,7 @@ h1 {
   border: 1px solid var(--green-line);
   background: var(--green-soft);
   color: var(--text);
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   text-decoration: none;
 }
 
@@ -268,7 +273,8 @@ h1 {
   border-color: var(--red);
   background: var(--red-soft);
   color: var(--text);
-  outline: none;
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
 }
 
 .system-card {
@@ -281,7 +287,7 @@ h1 {
 .system-label {
   margin: 0 0 20px;
   color: var(--dim);
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   letter-spacing: 0.12em;
 }
 
@@ -305,14 +311,14 @@ h1 {
 
 .system-card dt {
   color: var(--red);
-  font-size: 0.65rem;
+  font-size: 0.74rem;
   letter-spacing: 0.08em;
 }
 
 .system-card dd {
   margin: 0;
   color: var(--text);
-  font-size: 0.9rem;
+  font-size: 0.98rem;
 }
 
 .terminal-shell {
@@ -405,7 +411,8 @@ h1 {
 .terminal-form button:focus-visible {
   border-color: var(--red);
   color: var(--text);
-  outline: none;
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
 }
 
 .terminal-meta {
@@ -414,7 +421,7 @@ h1 {
   gap: 8px 18px;
   margin-top: 12px;
   color: var(--dim);
-  font-size: 0.72rem;
+  font-size: 0.79rem;
   line-height: 1.5;
 }
 
@@ -426,7 +433,7 @@ h1 {
   min-height: 1.5em;
   margin: 9px 0 0;
   color: var(--green);
-  font-size: 0.76rem;
+  font-size: 0.84rem;
 }
 
 .chips {
@@ -442,7 +449,7 @@ h1 {
   border: 1px solid var(--green-line);
   background: rgba(0, 255, 65, 0.055);
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: 0.82rem;
 }
 
 .evidence-strip {
@@ -472,7 +479,7 @@ h1 {
 .evidence-strip span {
   max-width: 250px;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   line-height: 1.5;
 }
 
@@ -540,7 +547,7 @@ h1 {
   gap: 8px 18px;
   margin: 0 0 28px;
   color: var(--dim);
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   letter-spacing: 0.06em;
 }
 
@@ -559,7 +566,7 @@ h1 {
 .project-summary {
   margin: 20px 0 0;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1.72;
 }
 
@@ -569,7 +576,7 @@ h1 {
   margin: 24px 0 0;
   padding: 0;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   list-style: none;
 }
 
@@ -589,7 +596,7 @@ h1 {
   margin: auto 0 0;
   padding-top: 28px;
   color: var(--dim);
-  font-size: 0.74rem;
+  font-size: 0.81rem;
   line-height: 1.6;
 }
 
@@ -620,7 +627,7 @@ h1 {
   border-left: 2px solid var(--green);
   background: var(--green-soft);
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.86rem;
 }
 
 .text-link {
@@ -642,7 +649,7 @@ h1 {
 .capability-index {
   margin: 0 0 24px;
   color: var(--red);
-  font-size: 0.7rem;
+  font-size: 0.78rem;
 }
 
 .capability-card h3 {
@@ -652,7 +659,7 @@ h1 {
 .capability-card p:last-child {
   margin: 14px 0 0;
   color: var(--muted);
-  font-size: 0.86rem;
+  font-size: 0.92rem;
 }
 
 .stack-line {
@@ -667,7 +674,7 @@ h1 {
   padding: 7px 10px;
   border: 1px solid var(--green-faint);
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: 0.82rem;
 }
 
 .archive-list {
@@ -692,14 +699,15 @@ h1 {
 
 .archive-list a span:last-child {
   color: var(--dim);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   text-align: right;
 }
 
 .archive-list a:hover,
 .archive-list a:focus-visible {
   background: var(--green-soft);
-  outline: none;
+  outline: 2px solid var(--green);
+  outline-offset: -2px;
 }
 
 .archive-list a:hover span:first-child,
@@ -733,7 +741,7 @@ h1 {
   gap: 24px;
   padding: 28px 0 0;
   color: var(--dim);
-  font-size: 0.68rem;
+  font-size: 0.76rem;
 }
 
 .site-footer p {
@@ -774,20 +782,21 @@ h1 {
   }
 
   .site-header {
+    flex-wrap: wrap;
+    gap: 8px;
     min-height: 58px;
     margin-bottom: 12px;
+    padding: 10px 0 12px;
   }
 
   .site-nav {
-    gap: 12px;
+    flex: 1 0 100%;
+    justify-content: space-between;
+    gap: 8px;
   }
 
   .site-nav a {
-    font-size: 0.67rem;
-  }
-
-  .site-nav a:nth-child(3) {
-    display: none;
+    font-size: 0.72rem;
   }
 
   .hero {
@@ -870,10 +879,6 @@ h1 {
 }
 
 @media (max-width: 430px) {
-  .site-nav a:nth-child(2) {
-    display: none;
-  }
-
   .evidence-strip div {
     grid-template-columns: 1fr;
   }

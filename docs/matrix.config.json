@@ -1,27 +1,29 @@
 {
   "identity": {
     "title": "Vlad Voropaev",
-    "role": "Applied AI Engineer & Product Builder",
-    "subtitle": "Applied AI Engineer & Product Builder",
-    "lead": "I turn research, messy workflows, and model capabilities into working products—from computer vision pipelines to local-first AI tools.",
+    "role": "Computer Vision Engineer",
+    "subtitle": "Computer Vision Engineer",
+    "lead": "I build multi-camera video analytics systems from dataset design and held-out evaluation through RTSP integration, tracking, pose logic, field iteration, and event evidence.",
     "eyebrow": "terminal://developer-profile",
     "profileUrl": "https://github.com/voropaevv",
     "pagesUrl": "https://voropaevv.github.io/voropaevv/",
     "linkedinUrl": "https://www.linkedin.com/in/thevladvoropaev/",
-    "primaryProjectUrl": "https://github.com/voropaevv/local-ai-chat-exporter",
+    "email": "thevladvoropaev@gmail.com",
+    "primaryProjectUrl": "https://doi.org/10.1109/ACDSA59508.2024.10467698",
     "location": "UAE"
   },
   "tags": [
-    "Computer Vision",
-    "Multimodal AI",
-    "LLM agents",
-    "local-first products",
-    "automation"
+    "Object detection",
+    "Object tracking",
+    "Pose estimation",
+    "PPE & zone analytics",
+    "OCR"
   ],
   "links": [
     {"label": "View GitHub", "url": "https://github.com/voropaevv"},
     {"label": "Open LinkedIn", "url": "https://www.linkedin.com/in/thevladvoropaev/"},
-    {"label": "Read IEEE paper", "url": "https://doi.org/10.1109/ACDSA59508.2024.10467698"}
+    {"label": "Email", "url": "mailto:thevladvoropaev@gmail.com"},
+    {"label": "Read IEEE paper", "url": "https://ieeexplore.ieee.org/document/10467698"}
   ],
   "readme": {
     "mode": "compact",
@@ -41,83 +43,107 @@
   },
   "status": {
     "mode": "developer-profile",
-    "build": "useful AI products",
-    "state": "building in public"
+    "build": "industrial video analytics",
+    "state": "computer-vision-first"
   },
   "terminalPrompts": [
-    "build useful-ai --from research --to product",
-    "trace pixels --through opencv --into decisions",
-    "export ai-chats --local-first --no-telemetry",
-    "orchestrate agents --with tests --with receipts",
+    "analyze rtsp --detect --track --reason",
+    "build safety --multi-camera --pose --zones",
+    "evaluate yolo --held-out --error-analysis",
+    "stabilize events --temporal --with-evidence",
     "connect vision --language --generation",
-    "publish evidence --not promises"
+    "ship systems --field-tested --measured"
   ],
   "highlightWords": [
     "VLAD VOROPAEV",
-    "APPLIED AI",
-    "PRODUCT BUILDER",
     "COMPUTER VISION",
-    "MULTIMODAL AI",
-    "AI AGENTS",
-    "LOCAL FIRST",
-    "JELLUVI",
-    "WORD SOLVER",
-    "NEUROCOMICS",
+    "VIDEO ANALYTICS",
+    "MULTI CAMERA",
+    "OBJECT DETECTION",
+    "OBJECT TRACKING",
+    "POSE ESTIMATION",
+    "PPE",
+    "RTSP",
+    "YOLO",
+    "BYTETRACK",
+    "HELD OUT",
+    "ERROR ANALYSIS",
+    "NEUROQUEST",
     "OPENCV",
-    "TESSERACT",
-    "CHAT EXPORTER",
+    "PYTORCH",
+    "FASTAPI",
+    "DOCKER",
+    "OCR",
     "RESEARCH",
     "EVIDENCE",
-    "AUTOMATION",
-    "CODEX",
     "PROTOTYPE",
-    "OPEN SOURCE",
-    "TOOLS",
-    "GITHUB"
+    "FIELD ITERATION",
+    "SAFETY"
   ],
   "commandModes": {
     "help": "commands: about · projects · research · stack · contact · matrix · clear",
-    "about": "Applied AI Engineer & Product Builder · Computer Vision → multimodal and agentic systems",
-    "projects": "selected work: Jelluvi · Word Solver CV · neurocomics research",
-    "research": "IEEE ACDSA 2024 · real-time vision → narrative → generated visuals",
-    "stack": "Python · TypeScript · OpenCV · Tesseract · browser extensions · Docker",
-    "contact": "github.com/voropaevv · linkedin.com/in/thevladvoropaev",
+    "about": "Computer Vision Engineer · industrial video analytics · UAE",
+    "projects": "industrial CV: crane safety · PPE analytics · multi-camera pilots",
+    "research": "NeuroQuest · first-author IEEE ACDSA 2024 · Xplore 10467698",
+    "stack": "Python · PyTorch · OpenCV · Ultralytics YOLO · ByteTrack · FastAPI · Docker",
+    "contact": "thevladvoropaev@gmail.com · linkedin.com/in/thevladvoropaev",
     "matrix": "matrix intensity boosted",
     "clear": "terminal cleared"
   },
   "publicProfile": {
     "name": "Vlad Voropaev",
-    "role": "Applied AI Engineer & Product Builder",
+    "role": "Computer Vision Engineer",
     "location": "UAE",
     "github": "https://github.com/voropaevv",
     "linkedin": "https://www.linkedin.com/in/thevladvoropaev/",
+    "email": "thevladvoropaev@gmail.com",
     "pages": "https://voropaevv.github.io/voropaevv/",
     "focus": [
-      "Computer Vision",
-      "Multimodal AI",
-      "LLM agents and automation",
-      "Local-first product systems",
-      "Agent-directed engineering"
+      "Industrial video analytics",
+      "Object detection and tracking",
+      "Multi-camera systems",
+      "Pose, PPE and zone analytics",
+      "OCR and image preprocessing"
     ],
-    "current_projects": [
+    "industrial_experience": [
+      {
+        "name": "Crane operator safety vision system",
+        "status": "paid client customization and operational trial",
+        "description": "A six-camera safety system with active-view selection, ByteTrack identities, pose-based wrist-to-pendant association, helmet checks, temporal voting and saved event evidence.",
+        "metrics": [
+          "1163 images",
+          "7499 labeled objects",
+          "0.920 mAP@0.50",
+          "0.707 mAP@0.50:0.95"
+        ]
+      },
+      {
+        "name": "Industrial safety video analytics",
+        "status": "historical Cyclop systems and pilots",
+        "description": "Modular RTSP analytics for PPE, danger zones, tracking and counting, equipment use and worker activity, including multi-camera and low-resolution CCTV work.",
+        "metrics": [
+          "0.906 offline PPE mAP@0.50",
+          "0.772 offline PPE mAP@0.50:0.95",
+          "17696 reviewed frames from eight camera feeds",
+          "1156 relevant curated frames"
+        ]
+      }
+    ],
+    "open_source": [
       {
         "name": "Jelluvi",
         "repository": "local-ai-chat-exporter",
         "status": "open-source active development",
         "description": "A local-first browser extension for exporting AI conversations to nine portable formats without telemetry, accounts, or remote rendering.",
         "url": "https://github.com/voropaevv/local-ai-chat-exporter"
-      },
+      }
+    ],
+    "educational_archive": [
       {
         "name": "Word Solver CV",
         "repository": "words_solver_cv",
-        "status": "documented portfolio system",
-        "description": "An end-to-end computer vision and OCR system that turns iPhone screenshots into ranked Russian word candidates.",
-        "url": "https://github.com/voropaevv/words_solver_cv",
-        "verified_facts": [
-          "5x5 board",
-          "123509-word dictionary",
-          "14-second documented end-to-end run"
-        ]
+        "status": "personal educational portfolio artifact",
+        "url": "https://github.com/voropaevv/words_solver_cv"
       }
     ],
     "research": [
@@ -126,7 +152,7 @@
         "venue": "IEEE ACDSA 2024",
         "role": "first author",
         "doi": "10.1109/ACDSA59508.2024.10467698",
-        "url": "https://doi.org/10.1109/ACDSA59508.2024.10467698"
+        "url": "https://ieeexplore.ieee.org/document/10467698"
       }
     ]
   },
@@ -135,19 +161,22 @@
     "@type": "Person",
     "@id": "https://voropaevv.github.io/voropaevv/#person",
     "name": "Vlad Voropaev",
-    "jobTitle": "Applied AI Engineer & Product Builder",
+    "jobTitle": "Computer Vision Engineer",
+    "email": "mailto:thevladvoropaev@gmail.com",
     "url": "https://voropaevv.github.io/voropaevv/",
     "sameAs": [
       "https://github.com/voropaevv",
       "https://www.linkedin.com/in/thevladvoropaev/"
     ],
     "knowsAbout": [
-      "Computer Vision",
-      "Multimodal AI",
-      "LLM agents",
-      "Automation",
-      "Local-first software",
-      "Product engineering"
+      "Industrial video analytics",
+      "Object detection",
+      "Object tracking",
+      "Multi-camera computer vision",
+      "Pose estimation",
+      "PPE and zone analytics",
+      "OCR",
+      "Image preprocessing"
     ],
     "homeLocation": {
       "@type": "Country",

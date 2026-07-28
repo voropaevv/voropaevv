@@ -1,36 +1,57 @@
 {
   "name": "Vlad Voropaev",
-  "role": "Applied AI Engineer & Product Builder",
+  "role": "Computer Vision Engineer",
   "location": "UAE",
   "github": "https://github.com/voropaevv",
   "linkedin": "https://www.linkedin.com/in/thevladvoropaev/",
+  "email": "thevladvoropaev@gmail.com",
   "pages": "https://voropaevv.github.io/voropaevv/",
   "focus": [
-    "Computer Vision",
-    "Multimodal AI",
-    "LLM agents and automation",
-    "Local-first product systems",
-    "Agent-directed engineering"
+    "Industrial video analytics",
+    "Object detection and tracking",
+    "Multi-camera systems",
+    "Pose, PPE and zone analytics",
+    "OCR and image preprocessing"
   ],
-  "current_projects": [
+  "industrial_experience": [
+    {
+      "name": "Crane operator safety vision system",
+      "status": "paid client customization and operational trial",
+      "description": "A six-camera safety system with active-view selection, ByteTrack identities, pose-based wrist-to-pendant association, helmet checks, temporal voting and saved event evidence.",
+      "metrics": [
+        "1163 images",
+        "7499 labeled objects",
+        "0.920 mAP@0.50",
+        "0.707 mAP@0.50:0.95"
+      ]
+    },
+    {
+      "name": "Industrial safety video analytics",
+      "status": "historical Cyclop systems and pilots",
+      "description": "Modular RTSP analytics for PPE, danger zones, tracking and counting, equipment use and worker activity, including multi-camera and low-resolution CCTV work.",
+      "metrics": [
+        "0.906 offline PPE mAP@0.50",
+        "0.772 offline PPE mAP@0.50:0.95",
+        "17696 reviewed frames from eight camera feeds",
+        "1156 relevant curated frames"
+      ]
+    }
+  ],
+  "open_source": [
     {
       "name": "Jelluvi",
       "repository": "local-ai-chat-exporter",
       "status": "open-source active development",
       "description": "A local-first browser extension for exporting AI conversations to nine portable formats without telemetry, accounts, or remote rendering.",
       "url": "https://github.com/voropaevv/local-ai-chat-exporter"
-    },
+    }
+  ],
+  "educational_archive": [
     {
       "name": "Word Solver CV",
       "repository": "words_solver_cv",
-      "status": "documented portfolio system",
-      "description": "An end-to-end computer vision and OCR system that turns iPhone screenshots into ranked Russian word candidates.",
-      "url": "https://github.com/voropaevv/words_solver_cv",
-      "verified_facts": [
-        "5x5 board",
-        "123509-word dictionary",
-        "14-second documented end-to-end run"
-      ]
+      "status": "personal educational portfolio artifact",
+      "url": "https://github.com/voropaevv/words_solver_cv"
     }
   ],
   "research": [
@@ -39,7 +60,7 @@
       "venue": "IEEE ACDSA 2024",
       "role": "first author",
       "doi": "10.1109/ACDSA59508.2024.10467698",
-      "url": "https://doi.org/10.1109/ACDSA59508.2024.10467698"
+      "url": "https://ieeexplore.ieee.org/document/10467698"
     }
   ]
 }

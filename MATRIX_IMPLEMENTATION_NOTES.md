@@ -7,7 +7,7 @@ This repository has two public surfaces:
 1. `README.md` — the GitHub profile README
 2. `docs/` — the interactive developer portfolio published with GitHub Pages
 
-Both surfaces represent Vlad Voropaev as an Applied AI Engineer and Product Builder. The GitHub Pages site is intentionally developer-focused; a future broader personal website is a separate project and hosting decision.
+Both surfaces represent Vlad Voropaev as a Computer Vision Engineer, with industrial video analytics and measurable systems work first. The GitHub Pages site is intentionally developer-focused; a future broader personal website is a separate project and hosting decision.
 
 ## Visual direction
 
@@ -25,13 +25,14 @@ The live page extends the original single-card composition into a responsive por
 ## Public content hierarchy
 
 1. Vlad Voropaev
-2. Applied AI Engineer & Product Builder
-3. Computer Vision as the deepest verified technical foundation
-4. Multimodal AI, LLM agents, automation, and local-first product systems
-5. Evidence through Jelluvi, Word Solver CV, and the IEEE neurocomics paper
-6. Historical public work clearly labeled as archive material
+2. Computer Vision Engineer
+3. Industrial video analytics, multi-camera systems, detection, tracking, pose, PPE, zones, and OCR
+4. Real operating work and measured outcomes
+5. NeuroQuest as first-author IEEE research
+6. Jelluvi as secondary open-source product engineering
+7. Word Solver CV and older repositories as educational or historical archive material
 
-Current product status is stated precisely. Jelluvi is open source and in active development; the profile does not claim a public store release, customer adoption, or user counts.
+Current product status is stated precisely. Jelluvi is open source and in active development.
 
 ## Shared configuration
 
@@ -79,6 +80,8 @@ The command form is keyboard-accessible and reports results through an `aria-liv
 - mobile density is lower than desktop density
 - `prefers-reduced-motion` switches to a static Matrix frame
 - semantic landmarks, heading order, skip navigation, visible focus states, and form labels are present
+- all primary navigation items remain visible on mobile
+- supporting text stays readable without competing with headings
 - the background canvas is decorative and hidden from accessibility APIs
 
 ## Regeneration and verification

@@ -199,10 +199,10 @@ def draw_panel(draw: ImageDraw.ImageDraw, image: Image.Image) -> Image.Image:
 
 
 def draw_identity(draw: ImageDraw.ImageDraw, config: dict[str, Any]) -> None:
-    title_font = get_font(40)
-    subtitle_font = get_font(18)
+    title_font = get_font(52)
+    subtitle_font = get_font(36)
     small_font = get_font(15)
-    command_font = get_font(20)
+    command_font = get_font(26)
     title = config["identity"]["title"]
     subtitle = config["identity"]["subtitle"]
     readme_config = config.get("readme", {})
@@ -210,13 +210,13 @@ def draw_identity(draw: ImageDraw.ImageDraw, config: dict[str, Any]) -> None:
     prompt = config["terminalPrompts"][0][:prompt_max]
 
     draw.text((132, 106), config["identity"].get("eyebrow", "terminal://public-profile"), font=small_font, fill=RED)
-    draw_text_with_glow(draw, (132, 140), title, title_font, WHITE_GREEN)
+    draw_text_with_glow(draw, (132, 132), title, title_font, WHITE_GREEN)
     draw_text_with_glow(draw, (132, 202), subtitle, subtitle_font, GREEN)
 
     draw.rounded_rectangle((132, 250, W - 132, 306), radius=6, fill=(0, 18, 4), outline=(0, 255, 65, 64), width=1)
-    draw.text((156, 268), "$", font=command_font, fill=GREEN)
-    draw.text((184, 268), prompt, font=command_font, fill=WHITE_GREEN)
-    draw.text((184 + min(820, len(prompt) * 12), 268), "▌", font=command_font, fill=GREEN)
+    draw.text((156, 262), "$", font=command_font, fill=GREEN)
+    draw.text((184, 262), prompt, font=command_font, fill=WHITE_GREEN)
+    draw.text((184 + min(820, len(prompt) * 15), 262), "▌", font=command_font, fill=GREEN)
 
 
 def write_preview_png(config: dict[str, Any]) -> None:
@@ -325,12 +325,12 @@ def write_svg(config: dict[str, Any]) -> None:
     style = textwrap.dedent(
         """
         .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Noto Sans CJK JP', 'Noto Sans Mono CJK JP', monospace; }
-        .title { font-size: 44px; font-weight: 800; fill: #eafff0; filter: url(#glow); }
-        .subtitle { font-size: 20px; font-weight: 700; fill: #00ff41; }
+        .title { font-size: 52px; font-weight: 800; fill: #eafff0; filter: url(#glow); }
+        .subtitle { font-size: 36px; font-weight: 700; fill: #00ff41; }
         .eyebrow { font-size: 14px; fill: #ff3030; font-weight: 700; }
-        .command { font-size: 22px; fill: #eafff0; }
-        .prompt { font-size: 22px; fill: #00ff41; font-weight: 700; }
-        .cursor { font-size: 22px; fill: #00ff41; }
+        .command { font-size: 26px; fill: #eafff0; }
+        .prompt { font-size: 26px; fill: #00ff41; font-weight: 700; }
+        .cursor { font-size: 26px; fill: #00ff41; }
         """
     ).strip()
 
@@ -356,8 +356,8 @@ def write_svg(config: dict[str, Any]) -> None:
   <rect x="92" y="74" width="1016" height="240" rx="18" fill="#000c03" fill-opacity="0.88" stroke="#00ff41" stroke-opacity="0.36" stroke-width="1" />
   <g class="mono">
     <text x="132" y="106" class="eyebrow">{eyebrow}</text>
-    <text x="132" y="156" class="title">{title}</text>
-    <text x="132" y="214" class="subtitle">{subtitle}</text>
+    <text x="132" y="160" class="title">{title}</text>
+    <text x="132" y="220" class="subtitle">{subtitle}</text>
     <rect x="132" y="248" width="936" height="56" rx="6" fill="#00ff41" fill-opacity="0.045" stroke="#00ff41" stroke-opacity="0.22" />
     <text x="156" y="286" class="prompt">$</text>
     {terminal}

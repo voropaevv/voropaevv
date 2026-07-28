@@ -2,14 +2,25 @@ name: Update Matrix README assets
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
     paths:
+      - "README.md"
       - "matrix.config.json"
       - "scripts/generate_matrix_assets.py"
+      - "docs/**"
+      - "tests/test_matrix_assets.py"
+      - ".github/workflows/update-matrix.yml"
+  push:
+    paths:
+      - "README.md"
+      - "matrix.config.json"
+      - "scripts/generate_matrix_assets.py"
+      - "docs/**"
+      - "tests/test_matrix_assets.py"
       - ".github/workflows/update-matrix.yml"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -24,8 +35,5 @@ jobs:
       - run: python scripts/generate_matrix_assets.py
       - run: python -m unittest tests/test_matrix_assets.py
       - run: node --check docs/js/matrix.js
-      - name: Commit updated assets
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore: update Matrix profile assets"
-          file_pattern: assets/matrix-profile.svg assets/matrix-preview.png assets/open-live-version.svg docs/matrix.config.json docs/public-profile.json
+      - name: Verify deterministic generated files are committed
+        run: git diff --exit-code -- assets/matrix-profile.svg assets/open-live-version.svg docs/matrix.config.json docs/public-profile.json
