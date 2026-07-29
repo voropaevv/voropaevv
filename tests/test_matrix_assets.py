@@ -105,12 +105,16 @@ class MatrixProfileContractTests(unittest.TestCase):
             prompt[: config["readme"]["promptMaxLength"]]
             for prompt in config["terminalPrompts"]
         ]
-        expected_widths = [
-            float(f"{min(820.0, max(8.0, len(prompt) * 13.2)):.1f}")
-            for prompt in prompts
-        ]
-        self.assertEqual(clip_widths, expected_widths)
-        for index, clip_width in enumerate(clip_widths):
+        commands = svg_tree.findall('.//svg:text[@class="command"]', namespace)
+        self.assertEqual(len(commands), len(prompts))
+        self.assertEqual(len(clip_widths), len(prompts))
+
+        for index, (command, prompt, clip_width) in enumerate(
+            zip(commands, prompts, clip_widths, strict=True)
+        ):
+            self.assertEqual(command.text, prompt)
+            self.assertEqual(command.attrib["lengthAdjust"], "spacingAndGlyphs")
+            self.assertAlmostEqual(float(command.attrib["textLength"]), clip_width)
             cursor_at_type_end = cursor_x_values[1 + index * 4]
             cursor_during_hold = cursor_x_values[2 + index * 4]
             self.assertAlmostEqual(cursor_at_type_end - 184.0, clip_width)

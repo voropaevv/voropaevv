@@ -25,6 +25,9 @@ CELL_H = 20
 COLS = W // CELL_W
 ROWS = H // CELL_H
 SEED = 20260601
+COMMAND_FONT_SIZE = 26
+COMMAND_GLYPH_ADVANCE = 16.0
+COMMAND_MAX_WIDTH = 820.0
 
 GREEN = (0, 255, 65)
 GREEN_DIM = (0, 96, 36)
@@ -199,11 +202,16 @@ def draw_panel(draw: ImageDraw.ImageDraw, image: Image.Image) -> Image.Image:
     return Image.alpha_composite(image.convert("RGBA"), panel).convert("RGB")
 
 
+def terminal_prompt_width(prompt: str) -> float:
+    """Return the deterministic width shared by SVG text, reveal mask, and cursor."""
+    return min(COMMAND_MAX_WIDTH, max(8.0, len(prompt) * COMMAND_GLYPH_ADVANCE))
+
+
 def draw_identity(draw: ImageDraw.ImageDraw, config: dict[str, Any]) -> None:
     title_font = get_font(52)
     subtitle_font = get_font(36)
     small_font = get_font(15)
-    command_font = get_font(26)
+    command_font = get_font(COMMAND_FONT_SIZE)
     title = config["identity"]["title"]
     subtitle = config["identity"]["subtitle"]
     readme_config = config.get("readme", {})
@@ -217,7 +225,7 @@ def draw_identity(draw: ImageDraw.ImageDraw, config: dict[str, Any]) -> None:
     draw.rounded_rectangle((132, 250, W - 132, 306), radius=6, fill=(0, 18, 4), outline=(0, 255, 65, 64), width=1)
     draw.text((156, 262), "$", font=command_font, fill=GREEN)
     draw.text((184, 262), prompt, font=command_font, fill=WHITE_GREEN)
-    draw.text((184 + min(820, len(prompt) * 15), 262), "▌", font=command_font, fill=GREEN)
+    draw.text((184 + terminal_prompt_width(prompt), 262), "▌", font=command_font, fill=GREEN)
 
 
 def write_preview_png(config: dict[str, Any]) -> None:
@@ -240,11 +248,10 @@ def terminal_svg(config: dict[str, Any]) -> str:
     cursor_x_values: list[float] = []
     prompt_x = 184
     prompt_y = 286
-    max_width = 820
 
     for idx, raw_prompt in enumerate(raw_prompts):
         prompt = escape(raw_prompt)
-        prompt_width = min(max_width, max(8.0, len(raw_prompt) * 13.2))
+        prompt_width = terminal_prompt_width(raw_prompt)
         start = idx * 5.2 / total
         type_end = (idx * 5.2 + 1.55) / total
         hold_end = (idx * 5.2 + 3.78) / total
@@ -261,7 +268,7 @@ def terminal_svg(config: dict[str, Any]) -> str:
             f'''<clipPath id="{clip_id}"><rect x="{prompt_x}" y="{prompt_y - 26}" width="0" height="38"><animate attributeName="width" dur="{total:.1f}s" repeatCount="indefinite" values="{width_values}" keyTimes="{key_times}" /></rect></clipPath>'''
         )
         lines.append(
-            f'''<text x="{prompt_x}" y="{prompt_y}" class="command" clip-path="url(#{clip_id})" opacity="0">{prompt}<animate attributeName="opacity" dur="{total:.1f}s" repeatCount="indefinite" values="{opacity_values}" keyTimes="{key_times}" /></text>'''
+            f'''<text x="{prompt_x}" y="{prompt_y}" class="command" textLength="{prompt_width:.1f}" lengthAdjust="spacingAndGlyphs" clip-path="url(#{clip_id})" opacity="0">{prompt}<animate attributeName="opacity" dur="{total:.1f}s" repeatCount="indefinite" values="{opacity_values}" keyTimes="{key_times}" /></text>'''
         )
 
         for key_time, cursor_x in [
@@ -324,14 +331,14 @@ def write_svg(config: dict[str, Any]) -> None:
     terminal = terminal_svg(config)
 
     style = textwrap.dedent(
-        """
-        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Noto Sans CJK JP', 'Noto Sans Mono CJK JP', monospace; }
-        .title { font-size: 52px; font-weight: 800; fill: #eafff0; filter: url(#glow); }
-        .subtitle { font-size: 36px; font-weight: 700; fill: #00ff41; }
-        .eyebrow { font-size: 14px; fill: #ff3030; font-weight: 700; }
-        .command { font-size: 26px; fill: #eafff0; }
-        .prompt { font-size: 26px; fill: #00ff41; font-weight: 700; }
-        .cursor { font-size: 26px; fill: #00ff41; }
+        f"""
+        .mono {{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Noto Sans CJK JP', 'Noto Sans Mono CJK JP', monospace; }}
+        .title {{ font-size: 52px; font-weight: 800; fill: #eafff0; filter: url(#glow); }}
+        .subtitle {{ font-size: 36px; font-weight: 700; fill: #00ff41; }}
+        .eyebrow {{ font-size: 14px; fill: #ff3030; font-weight: 700; }}
+        .command {{ font-size: {COMMAND_FONT_SIZE}px; fill: #eafff0; }}
+        .prompt {{ font-size: {COMMAND_FONT_SIZE}px; fill: #00ff41; font-weight: 700; }}
+        .cursor {{ font-size: {COMMAND_FONT_SIZE}px; fill: #00ff41; }}
         """
     ).strip()
 
